@@ -1,0 +1,179 @@
+/* RESETS */
+
+:root {
+    --primary-color: rgb(31, 112, 204);
+}
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: #333;
+    line-height: 1.5;
+}
+
+ul {
+    list-style-type: none;
+}
+
+a {
+    text-decoration: none;
+    color: #333;
+}
+
+h1,
+h2,
+p {
+    margin: 10px 0;
+}
+
+img {
+    width: 100%;
+}
+
+
+/* Navbar Styles */
+
+.navbar {
+    background-color: var(--primary-color);
+    color: white;
+    height: 75px;
+    border-bottom: 1px #fff solid;
+}
+
+.navbar .flex {
+    justify-content: space-between;
+}
+
+.navbar ul {
+    display: flex;
+}
+
+.navbar a {
+    color: white;
+    padding: 0 10px;
+    margin: 0 5px;
+}
+
+.navbar nav a:hover {
+    border-bottom: white 2px solid;
+}
+
+
+/* Showcase */
+
+.showcase {
+    height: 450px;
+    background-color: var(--primary-color);
+    color: white;
+    position: relative;
+}
+
+.showcase .grid {
+    overflow: visible;
+}
+
+.showcase-form {
+    position: relative;
+    top: 30px;
+    height: 450px;
+}
+
+.form-control label,
+.form-control input {
+    display: block;
+    font-size: 12px;
+    margin: 5px 0;
+}
+
+.showcase-form input[type="text"],
+.showcase-form input[type="email"],
+select,
+textarea {
+    border: 0;
+    outline: none;
+    border-bottom: 1px solid #333;
+    width: 80%;
+    padding: 4px;
+}
+
+
+/* About Me */
+
+.about-me {
+    padding: 50px 0px;
+    overflow: auto;
+}
+
+.about-me-photo {
+    height: 300px;
+    width: 300px;
+}
+
+.about-me-text {
+    overflow: hidden;
+}
+
+
+/* Footer */
+
+footer {
+    background-color: var(--primary-color);
+    color: white;
+    height: 50px;
+    border-bottom: 1px #fff solid;
+}
+
+
+/* Utilities */
+
+.btn {
+    display: inline-block;
+    padding: 10px 30px;
+    cursor: pointer;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px #fff solid;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: auto;
+    padding: 0 50px;
+}
+
+.flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.card {
+    background-color: #fff;
+    color: #333;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .2);
+    border-radius: 20px;
+    padding: 20px;
+    margin: 10px;
+}
