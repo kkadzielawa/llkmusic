@@ -17,6 +17,10 @@ __pycache__/
 data/
 
 
+#CONTENT FOLDER#
+#############
+content/
+
 #JUPYTER#
 #########
 .ipynb_checkpoints
