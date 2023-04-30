@@ -25,3 +25,8 @@ content/
 #########
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
+
+
+#SQL LITE DB#
+#############
+db.sqlite3

@@ -11,28 +11,26 @@
   <title>LLKMusic | Blues &amp Jazz | Blog &amp Courses</title>
 </head>
 <body>
+  <nav class="navbar">
+      <div class="container flex-between nav-container">
+        <input class="checkbox" type="checkbox" name="" id=""/>
+          <ul class="items">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'home' %}">Blog</a></li>
+            <li><a href="{% url 'home' %}">Courses</a></li>
+            <li><a href="{% url 'home' %}">Songs</a></li>
+            <li><a href="{% url 'home' %}">Services</a></li>
+          </ul>
+          
+          <div class="hamburger-lines">
+            <span class="line line1"></span>
+            <span class="line line2"></span>
+            <span class="line line3"></span>
+          </div> 
+          <h1 class="logo"><a href="{% url 'home' %}">LLKMusic</a></h1>
+      </div>
+  </nav>
   
-  <div class="navbar">
-    <div class="container flex">
-        <h1 class="logo"><a href="index.html">LLKMusic</a></h1>
-        <nav>
-            <ul>
-                <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'home' %}">Blog</a></li>
-                <li><a href="{% url 'home' %}">Courses</a></li>
-                <li><a href="{% url 'home' %}">Songs</a></li>
-                <li><a href="{% url 'home' %}">Services</a></li>
-            </ul>
-        </nav>
-        {% comment %} <a href="#" id="hamb">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg></i>
-        </a> {% endcomment %}
-    </div>
-  </div>
 
   {% block content %}
   {% endblock content %}
