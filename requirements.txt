@@ -33,7 +33,6 @@ Pygments==2.14.0
 PyNaCl==1.4.0
 pyrsistent==0.17.3
 python-dotenv==0.15.0
-pywin32==227
 PyYAML==5.4.1
 requests==2.25.1
 six==1.15.0
@@ -45,3 +44,5 @@ urllib3==1.26.3
 virtualenv==20.2.2
 virtualenv-clone==0.5.4
 websocket-client==0.57.0
+whitenoise==6.2.0
+Brotli==1.0.9
