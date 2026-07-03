@@ -2,50 +2,61 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="{% block meta_description %}LLKMusic — Blues & Jazz blog, courses, and learning resources by Konrad Kadzielawa.{% endblock %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <title>LLKMusic | Blues &amp Jazz | Blog &amp Courses</title>
+  <script src="https://kit.fontawesome.com/6e526d197e.js" crossorigin="anonymous"></script>
+  <title>{% block title %}LLKMusic | Blues & Jazz | Blog & Courses{% endblock %}</title>
 </head>
+
 <body>
-  
+
   <div class="navbar">
     <div class="container flex">
-        <h1 class="logo"><a href="{% url 'home' %}">LLKMusic</a></h1>
-        <nav>
-            <ul>
-                <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'home' %}">Blog</a></li>
-                <li><a href="{% url 'home' %}">Courses</a></li>
-                <li><a href="{% url 'home' %}">Songs</a></li>
-                <li><a href="{% url 'home' %}">Services</a></li>
-            </ul>
-        </nav>
+      <h1 class="logo"><a href="{% url 'home' %}">LLKMusic</a></h1>
+      <nav class="nav-menu" id="nav-menu">
+        <ul>
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'blog:post_list' %}">Blog</a></li>
+          <li><a href="#">Courses</a></li>
+          <li><a href="#">Songs</a></li>
+          <li><a href="#">Services</a></li>
+        </ul>
+      </nav>
+      <div class="menu-btn" id="menu-btn">
+        <i class="fas fa-bars"></i>
+      </div>
     </div>
-</div>
+  </div>
 
-  {% block content %}
-  {% endblock content %}
+  <main class="main-content">
+    {% block content %}
+    {% endblock content %}
+  </main>
 
 
-  
+
   <footer>
     <div class="container flex-between">
       <div>
-        <span>© 2023 LLKMusic</span>
+        <span>© {% now "Y" %} LLKMusic</span>
       </div>
       <div>
         <ul class="flex">
           <li><a href="https://www.linkedin.com/in/konradkadzielawa/"><i class="fab fa-linkedin-in fa-lg"></i></a></li>
-          <li><a href="https://www.youtube.com/channel/UChqPSa40XJxfD2NYq7H9Vsw"><i class="fab fa-youtube fa-lg"></i></a></li>
+          <li><a href="https://www.youtube.com/@llkmusicvideos"><i class="fab fa-youtube fa-lg"></i></a></li>
           <li><a href="https://twitter.com/kkadzielawa"><i class="fab fa-twitter fa-lg"></i></a></li>
+          <li><a href="https://www.instagram.com/konradkadzielawa/"><i class="fab fa-instagram fa-lg"></i></a></li>
         </ul>
       </div>
     </div>
   </footer>
-  <script src="https://kit.fontawesome.com/6e526d197e.js" crossorigin="anonymous"></script>
   <script src="{% static 'js/main.js' %}"></script>
 </body>
+
 </html>
