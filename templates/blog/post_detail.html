@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} | LLKMusic{% endblock %}
+
+{% block content %}
+<section class="blog-detail-section" style="padding: 50px 0;">
+    <div class="container">
+        <a href="{% url 'blog:post_list' %}" style="display: inline-block; margin-bottom: 20px; color: var(--primary-color); font-weight: bold; text-decoration: none; transition: color 0.2s;">&larr; Back to Blog</a>
+        
+        <article class="card" style="padding: 40px; overflow: hidden;">
+            <h1 style="font-size: 2.8rem; line-height: 1.2; margin-bottom: 15px; color: #333;">{{ post.title }}</h1>
+            
+            <div style="font-size: 0.95rem; color: #777; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                <span>Published on {{ post.created_at|date:"F d, Y" }}</span>
+                <span style="margin: 0 10px;">|</span>
+                <span>By {{ post.author.get_full_name|default:post.author.username }}</span>
+            </div>
+            
+            {% if post.featured_image %}
+            <div style="margin-bottom: 30px; border-radius: 10px; overflow: hidden; max-height: 500px; background: #eee;">
+                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" style="width: 100%; height: auto; display: block; object-fit: cover;">
+            </div>
+            {% endif %}
+            
+            <div style="font-size: 1.1rem; line-height: 1.8; color: #333; white-space: pre-line;">
+                {{ post.body }}
+            </div>
+        </article>
+    </div>
+</section>
+{% endblock content %}

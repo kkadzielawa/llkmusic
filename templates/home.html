@@ -2,6 +2,8 @@
 
 {% load static %}
 
+{% block title %}Home | LLKMusic{% endblock %}
+
 {% block content %}
 
 <section class="showcase">
@@ -9,31 +11,32 @@
         <div class="showcase-text">
             <h1>Welcome to LLKMusic</h1>
             <p>Unique place to share the joy of blues & jazz</p>
-            <a href="{% url 'home' %}" class="btn btn-outline">Read Blog</a>
+            <a href="{% url 'blog:post_list' %}" class="btn btn-outline">Read Blog</a>
         </div>
         <div class="showcase-form card">
-            <h1>Contact Me</h1>
-            <form>
+            <h2>Contact Me</h2>
+            <form method="post" action="#">
+                {% csrf_token %}
                 <div class="form-control">
                     <label for="name">Name:</label>
-                    <input type="text" name="name" placeholder="Name">
+                    <input type="text" id="name" name="name" placeholder="Name" required>
                 </div>
                 <div class="form-control">
-                    <label for="name">Email:</label>
-                    <input type="email" name="email" placeholder="Email">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Email" required>
                 </div>
                 <div class="form-control">
                     <label for="services">Interested in:</label>
                     <select id="services" name="services">
-                    <option value="courses">Courses</option>
-                    <option value="learn">Learning Sessions</option>
-                    <option value="record">Recording Sessions</option>
-                    <option value="other">Other</option>
+                        <option value="courses">Courses</option>
+                        <option value="learn">Learning Sessions</option>
+                        <option value="record">Recording Sessions</option>
+                        <option value="other">Other</option>
                     </select>
                 </div>
                 <div class="form-control">
                     <label for="message">Details: </label>
-                    <textarea name="message" rows="7" placeholder="Type Your Message:"></textarea>
+                    <textarea id="message" name="message" rows="7" placeholder="Type Your Message:" required></textarea>
                 </div>
                 <input type="submit" value="Contact" class="btn btn-primary">
             </form>
@@ -43,16 +46,15 @@
 
 <section class="about-me">
     <div class="container grid">
-
         <div class="about-me-photo">
-            <img src="{% static 'img/personal_photo.png' %}" alt="" srcset=""></img>
+            <img src="{% static 'img/personal_photo.png' %}" alt="Konrad Kadzielawa - Blues and Jazz Guitarist">
         </div>
         <div class="about-me-text">
-            Hi! My name is Konrad Kadzielawa and I am a Chicago-based blues/jazz musician. I have started playing guitar when I was 14 and have been involved in a variety of ways with Chicago blues scene. This site is centered around the blog section where I intend
-            to regularly post information relevant to improving your technique, repertoire, ear training and other aspects with respect to playing guitar/piano.
+            <p>
+                Hi! My name is Konrad Kadzielawa and I am a Chicago-based blues/jazz musician. I started playing guitar when I was 14 and have been involved in a variety of ways with the Chicago blues scene. This site is centered around the blog section where I intend to regularly post information relevant to improving your technique, repertoire, ear training and other aspects with respect to playing guitar/piano.
+            </p>
         </div>
     </div>
-
 </section>
 
 {% endblock content %}
