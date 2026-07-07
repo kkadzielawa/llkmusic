@@ -23,9 +23,15 @@
         <ul>
           <li><a href="{% url 'home' %}">Home</a></li>
           <li><a href="{% url 'blog:post_list' %}">Blog</a></li>
-          <li><a href="#">Courses</a></li>
-          <li><a href="#">Songs</a></li>
+          <li><a href="{% url 'home' %}#shop">Shop</a></li>
           <li><a href="#">Services</a></li>
+          <li>
+            <a href="{% url 'home' %}#cart" class="cart-nav-link" aria-label="View shopping cart">
+              <i class="fas fa-shopping-cart"></i>
+              <span>Cart</span>
+              <span class="cart-count" id="cart-count">0</span>
+            </a>
+          </li>
         </ul>
       </nav>
       <div class="menu-btn" id="menu-btn">
