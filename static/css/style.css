@@ -133,7 +133,7 @@ textarea:focus {
 
 /* About Me */
 
-.shop-section {
+.courses-section {
     padding: 70px 0;
     background: #f7f9fc;
 }
@@ -156,7 +156,7 @@ textarea:focus {
     text-transform: uppercase;
 }
 
-.shop-layout {
+.courses-layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 380px;
     gap: 24px;
@@ -452,7 +452,7 @@ footer ul li a i {
     .showcase .grid {
         grid-template-columns: 1fr;
     }
-    .shop-layout,
+    .courses-layout,
     .product-grid {
         grid-template-columns: 1fr;
     }

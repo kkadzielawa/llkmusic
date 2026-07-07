@@ -110,14 +110,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderCart() {
-        if (!cartItemsEl || !cartSubtotalEl || !cartTotalEl || !cartCountEl) {
+        const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
+
+        if (cartCountEl) {
+            cartCountEl.textContent = itemCount;
+        }
+
+        if (!cartItemsEl || !cartSubtotalEl || !cartTotalEl) {
             return;
         }
 
-        const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
         const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
-        cartCountEl.textContent = itemCount;
         cartSubtotalEl.textContent = currency.format(subtotal);
         cartTotalEl.textContent = currency.format(subtotal);
 

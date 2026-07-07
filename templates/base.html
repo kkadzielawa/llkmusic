@@ -8,7 +8,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="{% block meta_description %}LLKMusic — Blues & Jazz blog, courses, and learning resources by Konrad Kadzielawa.{% endblock %}">
+    content="{% block meta_description %}LLKMusic - Blues & Jazz blog, courses, and learning resources by Konrad Kadzielawa.{% endblock %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <script src="https://kit.fontawesome.com/6e526d197e.js" crossorigin="anonymous"></script>
   <title>{% block title %}LLKMusic | Blues & Jazz | Blog & Courses{% endblock %}</title>
@@ -23,10 +23,10 @@
         <ul>
           <li><a href="{% url 'home' %}">Home</a></li>
           <li><a href="{% url 'blog:post_list' %}">Blog</a></li>
-          <li><a href="{% url 'home' %}#shop">Shop</a></li>
+          <li><a href="{% url 'courses' %}">Courses</a></li>
           <li><a href="#">Services</a></li>
           <li>
-            <a href="{% url 'home' %}#cart" class="cart-nav-link" aria-label="View shopping cart">
+            <a href="{% url 'courses' %}#cart" class="cart-nav-link" aria-label="View shopping cart">
               <i class="fas fa-shopping-cart"></i>
               <span>Cart</span>
               <span class="cart-count" id="cart-count">0</span>
@@ -45,12 +45,10 @@
     {% endblock content %}
   </main>
 
-
-
   <footer>
     <div class="container flex-between">
       <div>
-        <span>© {% now "Y" %} LLKMusic</span>
+        <span>&copy; {% now "Y" %} LLKMusic</span>
       </div>
       <div>
         <ul class="flex">
