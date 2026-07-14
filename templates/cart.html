@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Cart | LLKMusic{% endblock %}
+
+{% block content %}
+<section class="cart-section">
+    <div class="container">
+        <div class="section-heading cart-heading">
+            <p class="eyebrow">Your Cart</p>
+            <h1>Review your selected items</h1>
+            <p>This page is just for the cart. Use the courses page to add items, then come back here to adjust quantities or clear your order.</p>
+        </div>
+
+        <aside class="cart-panel" id="cart" aria-labelledby="cart-title">
+            <div class="cart-header">
+                <div>
+                    <p class="eyebrow">Order Summary</p>
+                    <h2 id="cart-title">Shopping Cart</h2>
+                </div>
+                <button type="button" class="clear-cart" id="clear-cart">Clear</button>
+            </div>
+
+            <div class="cart-items" id="cart-items">
+                <p class="empty-cart">Your cart is empty.</p>
+            </div>
+
+            <div class="cart-summary">
+                <div>
+                    <span>Subtotal</span>
+                    <strong id="cart-subtotal">$0.00</strong>
+                </div>
+                <div>
+                    <span>Estimated total</span>
+                    <strong id="cart-total">$0.00</strong>
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary checkout-btn" id="checkout-btn" disabled>Checkout</button>
+            <p class="checkout-note" id="checkout-note" role="status" aria-live="polite"></p>
+        </aside>
+    </div>
+</section>
+{% endblock content %}

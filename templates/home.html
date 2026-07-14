@@ -14,7 +14,7 @@
             <a href="{% url 'blog:post_list' %}" class="btn btn-outline">Read Blog</a>
             <a href="{% url 'courses' %}" class="btn btn-outline">View Courses</a>
         </div>
-        <div class="showcase-form card">
+        <div class="showcase-form card" id="contact">
             <h2>Contact Me</h2>
             <form method="post" action="#">
                 {% csrf_token %}

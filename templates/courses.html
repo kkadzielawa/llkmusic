@@ -8,75 +8,54 @@
         <div class="section-heading">
             <p class="eyebrow">LLKMusic Courses</p>
             <h1>Courses, sessions, and song resources</h1>
-            <p>Choose the music tools you want to work with and build your cart below.</p>
+            <p>Choose the music tools you want to work with. Add items to your cart from the product cards below.</p>
         </div>
 
-        <div class="courses-layout">
-            <div class="product-grid" aria-label="Courses">
-                <article class="product-card" data-product-id="blues-foundations" data-product-name="Blues Guitar Foundations" data-product-price="49">
-                    <div>
-                        <span class="product-type">Course</span>
-                        <h2>Blues Guitar Foundations</h2>
-                        <p>Shuffle rhythm, turnarounds, pentatonic phrasing, and practice tracks for building a stronger blues vocabulary.</p>
-                    </div>
-                    <div class="product-action">
-                        <strong>$49</strong>
-                        <button type="button" class="btn btn-primary add-to-cart">Add to Cart</button>
-                    </div>
-                </article>
+        <div class="product-grid" aria-label="Courses">
+            <article class="product-card" data-product-id="blues-foundations" data-product-name="Blues Guitar Foundations" data-product-price="49">
+                <div>
+                    <span class="product-type">Course</span>
+                    <h2>Blues Guitar Foundations</h2>
+                    <p>Shuffle rhythm, turnarounds, pentatonic phrasing, and practice tracks for building a stronger blues vocabulary.</p>
+                </div>
+                <div class="product-action">
+                    <strong>$49</strong>
+                    <button type="button" class="btn btn-primary add-to-cart">Add to Cart</button>
+                </div>
+            </article>
 
-                <article class="product-card" data-product-id="jazz-chords" data-product-name="Jazz Chord Starter Pack" data-product-price="35">
-                    <div>
-                        <span class="product-type">Song Pack</span>
-                        <h2>Jazz Chord Starter Pack</h2>
-                        <p>Playable chord shapes, comping studies, and lead sheets for common jazz progressions.</p>
-                    </div>
-                    <div class="product-action">
-                        <strong>$35</strong>
-                        <button type="button" class="btn btn-primary add-to-cart">Add to Cart</button>
-                    </div>
-                </article>
+            <article class="product-card" data-product-id="jazz-chords" data-product-name="Jazz Chord Starter Pack" data-product-price="35">
+                <div>
+                    <span class="product-type">Song Pack</span>
+                    <h2>Jazz Chord Starter Pack</h2>
+                    <p>Playable chord shapes, comping studies, and lead sheets for common jazz progressions.</p>
+                </div>
+                <div class="product-action">
+                    <strong>$35</strong>
+                    <button type="button" class="btn btn-primary add-to-cart">Add to Cart</button>
+                </div>
+            </article>
 
-                <article class="product-card" data-product-id="private-session" data-product-name="Private Learning Session" data-product-price="75">
-                    <div>
-                        <span class="product-type">Lesson</span>
-                        <h2>Private Learning Session</h2>
-                        <p>A focused one-on-one session for technique, repertoire, ear training, improvisation, or recording questions.</p>
-                    </div>
-                    <div class="product-action">
-                        <strong>$75</strong>
-                        <button type="button" class="btn btn-primary add-to-cart">Add to Cart</button>
-                    </div>
-                </article>
+            <article class="product-card" data-product-id="private-session" data-product-name="Private Learning Session" data-product-price="75">
+                <div>
+                    <span class="product-type">Lesson</span>
+                    <h2>Private Learning Session</h2>
+                    <p>A focused one-on-one session for technique, repertoire, ear training, improvisation, or recording questions.</p>
+                </div>
+                <div class="product-action">
+                    <strong>$75</strong>
+                    <button type="button" class="btn btn-primary add-to-cart">Add to Cart</button>
+                </div>
+            </article>
+        </div>
+
+        <div class="courses-cta card">
+            <div>
+                <p class="eyebrow">Need something custom?</p>
+                <h2>Looking for booking, lessons, or studio help?</h2>
+                <p>Explore the Services page for performance, recording, production, and coaching options.</p>
             </div>
-
-            <aside class="cart-panel" id="cart" aria-labelledby="cart-title">
-                <div class="cart-header">
-                    <div>
-                        <p class="eyebrow">Your Order</p>
-                        <h2 id="cart-title">Shopping Cart</h2>
-                    </div>
-                    <button type="button" class="clear-cart" id="clear-cart">Clear</button>
-                </div>
-
-                <div class="cart-items" id="cart-items">
-                    <p class="empty-cart">Your cart is empty.</p>
-                </div>
-
-                <div class="cart-summary">
-                    <div>
-                        <span>Subtotal</span>
-                        <strong id="cart-subtotal">$0.00</strong>
-                    </div>
-                    <div>
-                        <span>Estimated total</span>
-                        <strong id="cart-total">$0.00</strong>
-                    </div>
-                </div>
-
-                <button type="button" class="btn btn-primary checkout-btn" id="checkout-btn" disabled>Checkout</button>
-                <p class="checkout-note" id="checkout-note" role="status" aria-live="polite"></p>
-            </aside>
+            <a href="{% url 'services' %}" class="btn btn-primary">View Services</a>
         </div>
     </div>
 </section>

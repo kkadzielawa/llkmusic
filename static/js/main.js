@@ -43,6 +43,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: product.dataset.productName,
                 price: Number(product.dataset.productPrice),
             });
+
+            showAddFeedback(button, product);
+            flyToCart(button, product);
         });
     });
 
@@ -114,6 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (cartCountEl) {
             cartCountEl.textContent = itemCount;
+            cartCountEl.classList.remove('cart-count-pop');
+            void cartCountEl.offsetWidth;
+            cartCountEl.classList.add('cart-count-pop');
         }
 
         if (!cartItemsEl || !cartSubtotalEl || !cartTotalEl) {
@@ -181,5 +187,94 @@ document.addEventListener('DOMContentLoaded', () => {
             '"': '&quot;',
             "'": '&#039;',
         }[character]));
+    }
+
+    function showAddFeedback(button, productCard) {
+        const originalLabel = button.dataset.originalLabel || button.textContent;
+        button.dataset.originalLabel = originalLabel;
+
+        if (button.dataset.feedbackTimeout) {
+            window.clearTimeout(Number(button.dataset.feedbackTimeout));
+        }
+
+        button.classList.add('is-added');
+        button.textContent = 'Added!';
+
+        if (productCard) {
+            productCard.classList.remove('product-card--flash');
+            void productCard.offsetWidth;
+            productCard.classList.add('product-card--flash');
+            spawnAddToast(productCard);
+        }
+
+        const timeoutId = window.setTimeout(() => {
+            button.textContent = button.dataset.originalLabel || originalLabel;
+            button.classList.remove('is-added');
+            delete button.dataset.feedbackTimeout;
+        }, 900);
+
+        button.dataset.feedbackTimeout = String(timeoutId);
+    }
+
+    function spawnAddToast(productCard) {
+        const existingToast = productCard.querySelector('.add-to-cart-toast');
+        if (existingToast) {
+            existingToast.remove();
+        }
+
+        const toast = document.createElement('div');
+        toast.className = 'add-to-cart-toast';
+        toast.setAttribute('role', 'status');
+        toast.textContent = 'Added to cart';
+        productCard.appendChild(toast);
+
+        window.setTimeout(() => {
+            toast.classList.add('is-visible');
+        }, 10);
+
+        window.setTimeout(() => {
+            toast.classList.remove('is-visible');
+            window.setTimeout(() => {
+                toast.remove();
+            }, 240);
+        }, 1100);
+    }
+
+    function flyToCart(button, productCard) {
+        if (!cartCountEl) {
+            return;
+        }
+
+        const startRect = button.getBoundingClientRect();
+        const cartRect = cartCountEl.getBoundingClientRect();
+        const flyer = document.createElement('span');
+        flyer.className = 'cart-flyer';
+        flyer.textContent = '1';
+        flyer.setAttribute('aria-hidden', 'true');
+
+        const startX = startRect.left + startRect.width / 2;
+        const startY = startRect.top + startRect.height / 2;
+        const endX = cartRect.left + cartRect.width / 2;
+        const endY = cartRect.top + cartRect.height / 2;
+        const translateX = endX - startX;
+        const translateY = endY - startY;
+        const distance = Math.max(Math.hypot(translateX, translateY), 180);
+        const scale = Math.max(0.55, Math.min(1, 180 / distance));
+
+        flyer.style.left = `${startX}px`;
+        flyer.style.top = `${startY}px`;
+        flyer.style.setProperty('--fly-x', `${translateX}px`);
+        flyer.style.setProperty('--fly-y', `${translateY}px`);
+        flyer.style.setProperty('--fly-scale', `${scale}`);
+
+        document.body.appendChild(flyer);
+
+        requestAnimationFrame(() => {
+            flyer.classList.add('is-flying');
+        });
+
+        window.setTimeout(() => {
+            flyer.remove();
+        }, 900);
     }
 });

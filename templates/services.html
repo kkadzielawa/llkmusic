@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Services | LLKMusic{% endblock %}
+
+{% block content %}
+<section class="services-section">
+    <div class="container">
+        <div class="section-heading services-heading">
+            <p class="eyebrow">LLKMusic Services</p>
+            <h1>Live performance, studio work, and private coaching</h1>
+            <p>Choose the service that fits your project, then reach out to talk dates, goals, and the right next step.</p>
+        </div>
+
+        <div class="services-grid">
+            <article class="service-card">
+                <div class="service-icon" aria-hidden="true"><i class="fas fa-guitar"></i></div>
+                <p class="eyebrow">Performance</p>
+                <h2>Cover Band Performances</h2>
+                <p>High-energy blues and jazz-forward live sets for venues, private events, and celebrations that need a polished band sound.</p>
+                <ul class="service-points">
+                    <li>Flexible set lengths</li>
+                    <li>Classic blues and jazz repertoire</li>
+                    <li>Great for clubs, patios, and private parties</li>
+                </ul>
+                <div class="service-card-footer">
+                    <a href="{% url 'home' %}#contact" class="btn btn-outline service-card-link">Ask About This Service</a>
+                </div>
+            </article>
+
+            <article class="service-card">
+                <div class="service-icon" aria-hidden="true"><i class="fas fa-microphone"></i></div>
+                <p class="eyebrow">Studio</p>
+                <h2>Recording Sessions</h2>
+                <p>Bring guitar, piano, or arranging support into the studio for overdubs, comping, or session-ready musical ideas.</p>
+                <ul class="service-points">
+                    <li>Remote or in-person sessions</li>
+                    <li>Parts built around your song</li>
+                    <li>Clear communication and fast turnaround</li>
+                </ul>
+                <div class="service-card-footer">
+                    <a href="{% url 'home' %}#contact" class="btn btn-outline service-card-link">Ask About This Service</a>
+                </div>
+            </article>
+
+            <article class="service-card">
+                <div class="service-icon" aria-hidden="true"><i class="fas fa-sliders-h"></i></div>
+                <p class="eyebrow">Production</p>
+                <h2>Music Production</h2>
+                <p>Shape your track from demo to finished arrangement with practical advice on structure, instrumentation, and feel.</p>
+                <ul class="service-points">
+                    <li>Arrangement support</li>
+                    <li>Groove and tone guidance</li>
+                    <li>Support for song development</li>
+                </ul>
+                <div class="service-card-footer">
+                    <a href="{% url 'home' %}#contact" class="btn btn-outline service-card-link">Ask About This Service</a>
+                </div>
+            </article>
+
+            <article class="service-card">
+                <div class="service-icon" aria-hidden="true"><i class="fas fa-wave-square"></i></div>
+                <p class="eyebrow">Mixing</p>
+                <h2>Mixing and Mastering</h2>
+                <p>Get a cleaner, more balanced final presentation with mixes that translate well across speakers and headphones.</p>
+                <ul class="service-points">
+                    <li>Balance, clarity, and space</li>
+                    <li>Mastering for release prep</li>
+                    <li>Notes on revisions if needed</li>
+                </ul>
+                <div class="service-card-footer">
+                    <a href="{% url 'home' %}#contact" class="btn btn-outline service-card-link">Ask About This Service</a>
+                </div>
+            </article>
+
+            <article class="service-card">
+                <div class="service-icon" aria-hidden="true"><i class="fas fa-chalkboard-teacher"></i></div>
+                <p class="eyebrow">Lessons</p>
+                <h2>Private Lessons or Coaching</h2>
+                <p>Work one-on-one on technique, improvisation, repertoire, ear training, practice strategy, or recording questions.</p>
+                <ul class="service-points">
+                    <li>Guitar and piano support</li>
+                    <li>Beginner to advanced coaching</li>
+                    <li>Custom goals for each session</li>
+                </ul>
+                <div class="service-card-footer">
+                    <a href="{% url 'home' %}#contact" class="btn btn-outline service-card-link">Ask About This Service</a>
+                </div>
+            </article>
+
+            <article class="service-card">
+                <div class="service-icon" aria-hidden="true"><i class="fas fa-calendar-check"></i></div>
+                <p class="eyebrow">Booking</p>
+                <h2>Event and Music Booking</h2>
+                <p>Plan music for concerts, receptions, and special events with a straightforward booking process and clear expectations.</p>
+                <ul class="service-points">
+                    <li>Performance planning support</li>
+                    <li>Event-friendly communication</li>
+                    <li>Book solo or ensemble options</li>
+                </ul>
+                <div class="service-card-footer">
+                    <a href="{% url 'home' %}#contact" class="btn btn-outline service-card-link">Ask About This Service</a>
+                </div>
+            </article>
+        </div>
+
+        <div class="service-cta card">
+            <div>
+                <p class="eyebrow">Ready to talk?</p>
+                <h2>Tell me about your project and I’ll help you find the right fit.</h2>
+                <p>Use the contact form for custom questions, or jump back to the courses page if you want lessons and learning resources.</p>
+            </div>
+            <div class="service-cta-actions">
+                <a href="{% url 'home' %}#contact" class="btn btn-primary">Contact Me</a>
+                <a href="{% url 'courses' %}" class="btn btn-outline service-secondary-link">View Courses</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}
