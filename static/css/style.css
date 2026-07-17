@@ -712,7 +712,10 @@ textarea:focus {
 }
 
 .blog-detail-image {
+    max-width: 760px;
     margin-bottom: 30px;
+    margin-left: auto;
+    margin-right: auto;
     border-radius: 10px;
     background: #eee;
 }
