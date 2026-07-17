@@ -55,7 +55,7 @@ python manage.py runserver
 Use `docker-compose.prod.yml` on the DigitalOcean droplet with a populated `.env`:
 
 ```bash
-docker-compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 The production stack uses Gunicorn, PostgreSQL, and Caddy for HTTPS termination and media file serving.
@@ -127,7 +127,7 @@ Expected droplet setup:
 - Recommended values: `DO_USER=kkadzielawa` and `DO_APP_DIR=/home/kkadzielawa/llkmusic`
 - Production `.env` present on the droplet
 - Docker and Docker Compose available
-- `docker-compose version 1.29.2` is supported by the deploy script
+- `docker compose` plugin installed on the droplet
 - `scripts/deploy-production.sh` executable
 
-The deploy script intentionally refuses to continue if the droplet checkout has uncommitted changes. That keeps production deploys predictable and prevents server-side edits from being silently overwritten. After that clean-worktree check passes, it hard-resets the production checkout to `origin/deploy`, which lets production recover cleanly from forced branch realignments. It also auto-detects `docker compose` or `docker-compose`, and on legacy `docker-compose 1.29.x` it retries once after removing old project containers if the known `ContainerConfig` error appears during recreate.
+The deploy script intentionally refuses to continue if the droplet checkout has uncommitted changes. That keeps production deploys predictable and prevents server-side edits from being silently overwritten. After that clean-worktree check passes, it hard-resets the production checkout to `origin/deploy`, which lets production recover cleanly from forced branch realignments.
