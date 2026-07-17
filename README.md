@@ -65,14 +65,15 @@ Current production values:
 - Droplet user: `kkadzielawa`
 - App path: `/home/kkadzielawa/llkmusic`
 - Production domain: `www.llkmusic.com`
+- Apex redirect: `llkmusic.com` -> `https://www.llkmusic.com`
 - Caddy / Let's Encrypt email: `kkadzi25@gmail.com`
 
 For production, set at least these values in `.env` on the droplet:
 
 ```env
 DEBUG=False
-ALLOWED_HOSTS=www.llkmusic.com
-CSRF_TRUSTED_ORIGINS=https://www.llkmusic.com
+ALLOWED_HOSTS=www.llkmusic.com,llkmusic.com
+CSRF_TRUSTED_ORIGINS=https://www.llkmusic.com,https://llkmusic.com
 DATABASE_URL=postgres://llkmusic:replace-db-password@db:5432/llkmusic
 SESSION_COOKIE_SECURE=True
 CSRF_COOKIE_SECURE=True
@@ -108,6 +109,7 @@ The workflow does two things:
 
 - Runs Django CI checks against PostgreSQL.
 - SSHes into the DigitalOcean droplet and runs `scripts/deploy-production.sh`.
+- Performs an HTTPS smoke check against `https://www.llkmusic.com/` after deploy.
 
 Required GitHub repository secrets:
 
@@ -128,4 +130,4 @@ Expected droplet setup:
 - `docker-compose version 1.29.2` is supported by the deploy script
 - `scripts/deploy-production.sh` executable
 
-The deploy script intentionally refuses to continue if the droplet checkout has uncommitted changes. That keeps production deploys predictable and prevents server-side edits from being silently overwritten. It also auto-detects `docker compose` or `docker-compose`, so it works on newer local Docker installs and older droplet setups.
+The deploy script intentionally refuses to continue if the droplet checkout has uncommitted changes. That keeps production deploys predictable and prevents server-side edits from being silently overwritten. After that clean-worktree check passes, it hard-resets the production checkout to `origin/deploy`, which lets production recover cleanly from forced branch realignments. It also auto-detects `docker compose` or `docker-compose`, and on legacy `docker-compose 1.29.x` it retries once after removing old project containers if the known `ContainerConfig` error appears during recreate.

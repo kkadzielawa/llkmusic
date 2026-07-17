@@ -2,6 +2,10 @@
 	email kkadzi25@gmail.com
 }
 
+llkmusic.com {
+	redir https://www.llkmusic.com{uri} permanent
+}
+
 www.llkmusic.com {
 	encode gzip zstd
 
