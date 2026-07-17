@@ -85,3 +85,13 @@ jobs:
           script: |
             cd ${{ secrets.DO_APP_DIR }}
             APP_DIR=${{ secrets.DO_APP_DIR }} ./scripts/deploy-production.sh
+
+      - name: Smoke check production site
+        run: |
+          for attempt in $(seq 1 12); do
+            if curl --fail --silent --show-error --location https://www.llkmusic.com/ >/dev/null; then
+              exit 0
+            fi
+            sleep 5
+          done
+          exit 1
