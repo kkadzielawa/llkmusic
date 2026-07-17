@@ -1,9 +1,8 @@
 {
-	# Replace this with the real domain at deploy time.
-	email admin@example.com
+	email kkadzi25@gmail.com
 }
 
-your-domain.com {
+www.llkmusic.com {
 	encode gzip zstd
 
 	handle_path /media/* {

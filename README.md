@@ -55,7 +55,77 @@ python manage.py runserver
 Use `docker-compose.prod.yml` on the DigitalOcean droplet with a populated `.env`:
 
 ```bash
-docker compose -f docker-compose.prod.yml up -d --build
+docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
 The production stack uses Gunicorn, PostgreSQL, and Caddy for HTTPS termination and media file serving.
+
+Current production values:
+
+- Droplet user: `kkadzielawa`
+- App path: `/home/kkadzielawa/llkmusic`
+- Production domain: `www.llkmusic.com`
+- Caddy / Let's Encrypt email: `kkadzi25@gmail.com`
+
+For production, set at least these values in `.env` on the droplet:
+
+```env
+DEBUG=False
+ALLOWED_HOSTS=www.llkmusic.com
+CSRF_TRUSTED_ORIGINS=https://www.llkmusic.com
+DATABASE_URL=postgres://llkmusic:replace-db-password@db:5432/llkmusic
+SESSION_COOKIE_SECURE=True
+CSRF_COOKIE_SECURE=True
+SECURE_SSL_REDIRECT=True
+SECURE_HSTS_SECONDS=31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS=True
+POSTGRES_DB=llkmusic
+POSTGRES_USER=llkmusic
+POSTGRES_PASSWORD=replace-db-password
+```
+
+## CI/CD
+
+This repo now includes a GitHub Actions workflow at `.github/workflows/deploy.yml` that runs whenever the `deploy` branch receives a push.
+
+- `main` is the local/staging branch.
+- `deploy` is the production branch.
+- Merge `main` into `deploy` to trigger a production deploy.
+
+Release flow:
+
+```bash
+git checkout main
+git pull origin main
+
+git checkout deploy
+git pull origin deploy
+git merge main
+git push origin deploy
+```
+
+The workflow does two things:
+
+- Runs Django CI checks against PostgreSQL.
+- SSHes into the DigitalOcean droplet and runs `scripts/deploy-production.sh`.
+
+Required GitHub repository secrets:
+
+```text
+DO_HOST
+DO_USER
+DO_SSH_KEY
+DO_SSH_PORT
+DO_APP_DIR
+```
+
+Expected droplet setup:
+
+- Repo cloned at the same path as `DO_APP_DIR`
+- Recommended values: `DO_USER=kkadzielawa` and `DO_APP_DIR=/home/kkadzielawa/llkmusic`
+- Production `.env` present on the droplet
+- Docker and Docker Compose available
+- `docker-compose version 1.29.2` is supported by the deploy script
+- `scripts/deploy-production.sh` executable
+
+The deploy script intentionally refuses to continue if the droplet checkout has uncommitted changes. That keeps production deploys predictable and prevents server-side edits from being silently overwritten. It also auto-detects `docker compose` or `docker-compose`, so it works on newer local Docker installs and older droplet setups.
