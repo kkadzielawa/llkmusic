@@ -7,15 +7,12 @@ class Command(BaseCommand):
     help = 'Seeds two sample blog posts about blues and jazz'
 
     def handle(self, *args, **options):
-        # Use the first superuser as the author, or create one
         author = User.objects.filter(is_superuser=True).first()
         if not author:
-            author = User.objects.create_superuser(
-                'username123', 'username123@llkmusic.com', 'password123'
-            )
             self.stdout.write(self.style.WARNING(
-                'Created superuser "username123"'
+                'No superuser exists yet. Create one first, then rerun seed_posts.'
             ))
+            return
 
         post1, created1 = Post.objects.get_or_create(
             slug='12-bar-blues-beginners-guide',

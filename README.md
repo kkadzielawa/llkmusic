@@ -7,51 +7,55 @@ A Django-based web portal for blues & jazz guitar/piano learning, containing a b
 ## Technical Stack
 
 - **Backend**: Django 4.2 LTS (Python 3.12)
-- **Frontend**: HTML5, Vanilla CSS3 (Custom styling with Inter Google Font integration), Vanilla Javascript
-- **Database**: SQLite3 (default, gitignored)
+- **Frontend**: HTML5, Vanilla CSS3, Vanilla Javascript
+- **Database**: PostgreSQL in Docker, SQLite3 for the non-Docker fallback
 
 ---
 
 ## Setup and Installation
 
-1. **Clone the repository** (if not already done).
-2. **Set up your environment variables**:
-   Create a `.env` file in the root directory by copying the example template:
+1. Copy the example environment file:
    ```bash
    cp .env.example .env
    ```
-   Modify the values inside `.env` to suit your development/production environment.
-
-3. **Install Dependencies**:
-   Ensure you have Python 3.12+ installed, and install requirements:
-   ```bash
-   pip install -r requirements.txt
+2. For local Docker development, set `DATABASE_URL` in `.env` to the Compose database host:
+   ```env
+   DATABASE_URL=postgres://llkmusic:llkmusic@db:5432/llkmusic
    ```
-
-4. **Run Migrations**:
-   Run Django migrations to create the SQLite database tables:
+3. Start the stack:
    ```bash
-   python manage.py migrate
+   docker compose up --build
    ```
-
-5. **Create a Superuser**:
-   To access the Django admin portal (`/admin/`):
+4. Create an admin user:
    ```bash
-   python manage.py createsuperuser
+   docker compose exec web python manage.py createsuperuser
    ```
-
----
 
 ## Development
 
-- **Run Server**:
+- Run tests:
   ```bash
-  python manage.py runserver
+  docker compose exec web python manage.py test
   ```
-  Open `http://127.0.0.1:8000/` in your browser.
+- Run checks:
+  ```bash
+  docker compose exec web python manage.py check
+  docker compose exec web python manage.py check --deploy
+  ```
 
-- **Run Tests**:
-  To execute the unit tests for the pages and blog apps:
-  ```bash
-  python manage.py test
-  ```
+If you prefer non-Docker local development, install dependencies with `pip install -r requirements.txt` and run:
+
+```bash
+python manage.py migrate
+python manage.py runserver
+```
+
+## Production
+
+Use `docker-compose.prod.yml` on the DigitalOcean droplet with a populated `.env`:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+The production stack uses Gunicorn, PostgreSQL, and Caddy for HTTPS termination and media file serving.

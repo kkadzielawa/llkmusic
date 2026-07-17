@@ -1,5 +1,9 @@
 asgiref==3.8.1
 Django>=4.2,<5.0
+dj-database-url
+gunicorn
 pillow
+psycopg[binary]
 python-dotenv==1.0.1
 sqlparse==0.5.2
+whitenoise
