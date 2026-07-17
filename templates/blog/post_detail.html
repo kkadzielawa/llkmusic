@@ -17,8 +17,8 @@
             </div>
             
             {% if post.featured_image %}
-            <div style="margin-bottom: 30px; border-radius: 10px; overflow: hidden; max-height: 500px; background: #eee;">
-                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" style="width: 100%; height: auto; display: block; object-fit: cover;">
+            <div class="blog-detail-image">
+                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="blog-detail-image__img">
             </div>
             {% endif %}
             
