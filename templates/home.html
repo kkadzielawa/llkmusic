@@ -11,8 +11,10 @@
         <div class="showcase-text">
             <h1>Welcome to LLKMusic</h1>
             <p>Unique place to share the joy of blues & jazz</p>
-            <a href="{% url 'blog:post_list' %}" class="btn btn-outline">Read Blog</a>
-            <a href="{% url 'courses' %}" class="btn btn-outline">View Courses</a>
+            <div class="showcase-actions">
+                <a href="{% url 'blog:post_list' %}" class="btn btn-outline">Read Blog</a>
+                <a href="{% url 'courses' %}" class="btn btn-outline">View Courses</a>
+            </div>
         </div>
         <div class="showcase-form card" id="contact">
             <h2>Contact Me</h2>
