@@ -9,17 +9,16 @@
         <p style="margin-bottom: 40px; color: #666; font-size: 1.1rem;">Latest updates, tutorials, and stories from me
         </p>
 
-        <div style="display: flex; flex-direction: column; gap: 30px;">
+        <div class="blog-post-list">
             {% for post in posts %}
-            <article class="card"
-                style="display: flex; flex-direction: row; gap: 20px; align-items: stretch; overflow: hidden; padding: 0;">
+            <article class="card blog-post-card">
                 {% if post.featured_image %}
-                <div style="flex: 1; max-width: 300px; min-height: 200px; background: #eee;">
+                <div class="blog-post-card__media">
                     <img src="{{ post.featured_image.url }}" alt="{{ post.title }}"
-                        style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                        class="blog-post-card__image">
                 </div>
                 {% endif %}
-                <div style="flex: 2; padding: 25px; display: flex; flex-direction: column; justify-content: center;">
+                <div class="blog-post-card__body">
                     <h2 style="font-size: 1.8rem; margin-bottom: 10px;"><a href="{% url 'blog:post_detail' post.slug %}"
                             style="color: #333; transition: color 0.2s;">{{ post.title }}</a></h2>
                     <p style="font-size: 0.9rem; color: #777; margin-bottom: 15px;">Published on {{ post.created_at|date:"F d, Y" }} by {{ post.author.get_full_name|default:post.author.username }}
