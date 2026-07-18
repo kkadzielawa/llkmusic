@@ -18,28 +18,43 @@
         </div>
         <div class="showcase-form card" id="contact">
             <h2>Contact Me</h2>
-            <form method="post" action="#">
+            {% if messages %}
+            <div class="form-messages">
+                {% for message in messages %}
+                <p class="form-message form-message-{{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <form method="post" action="{% url 'home' %}#contact" novalidate>
                 {% csrf_token %}
+                {{ form.website }}
                 <div class="form-control">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" placeholder="Name" required>
+                    <label for="{{ form.name.id_for_label }}">Name:</label>
+                    {{ form.name }}
+                    {% for error in form.name.errors %}
+                    <p class="field-error">{{ error }}</p>
+                    {% endfor %}
                 </div>
                 <div class="form-control">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" placeholder="Email" required>
+                    <label for="{{ form.email.id_for_label }}">Email:</label>
+                    {{ form.email }}
+                    {% for error in form.email.errors %}
+                    <p class="field-error">{{ error }}</p>
+                    {% endfor %}
                 </div>
                 <div class="form-control">
-                    <label for="services">Interested in:</label>
-                    <select id="services" name="services">
-                        <option value="courses">Courses</option>
-                        <option value="learn">Learning Sessions</option>
-                        <option value="record">Recording Sessions</option>
-                        <option value="other">Other</option>
-                    </select>
+                    <label for="{{ form.services.id_for_label }}">Interested in:</label>
+                    {{ form.services }}
+                    {% for error in form.services.errors %}
+                    <p class="field-error">{{ error }}</p>
+                    {% endfor %}
                 </div>
                 <div class="form-control">
-                    <label for="message">Details: </label>
-                    <textarea id="message" name="message" rows="7" placeholder="Type Your Message:" required></textarea>
+                    <label for="{{ form.message.id_for_label }}">Details: </label>
+                    {{ form.message }}
+                    {% for error in form.message.errors %}
+                    <p class="field-error">{{ error }}</p>
+                    {% endfor %}
                 </div>
                 <input type="submit" value="Contact" class="btn btn-primary">
             </form>
