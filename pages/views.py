@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import EmailMessage
@@ -5,6 +7,9 @@ from django.urls import reverse
 from django.views.generic import FormView, TemplateView
 
 from .forms import ContactForm
+
+
+logger = logging.getLogger(__name__)
 
 
 class HomePageView(FormView):
@@ -29,7 +34,17 @@ class HomePageView(FormView):
             to=settings.CONTACT_FORM_RECIPIENTS,
             reply_to=[cleaned_data['email']],
         )
-        email.send(fail_silently=False)
+
+        try:
+            email.send(fail_silently=False)
+        except Exception:
+            logger.exception('Contact form email delivery failed')
+            messages.error(
+                self.request,
+                'Sorry, your message could not be sent. Please try again later.',
+            )
+            return self.render_to_response(self.get_context_data(form=form))
+
         messages.success(self.request, 'Thanks for reaching out. Your message has been sent.')
         return super().form_valid(form)
 
