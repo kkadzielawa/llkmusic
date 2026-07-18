@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -78,6 +80,23 @@ class PagesTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(mail.outbox), 0)
+
+    @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+    @patch('pages.views.logger.exception')
+    @patch('pages.views.EmailMessage.send', side_effect=OSError('SMTP timeout'))
+    def test_contact_form_email_failure_returns_error_message(self, mock_send, mock_logger_exception):
+        response = self.client.post(reverse('home'), {
+            'name': 'John Coltrane',
+            'email': 'john@example.com',
+            'services': 'record',
+            'message': 'I would like to discuss a recording session soon.',
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Sorry, your message could not be sent.')
+        self.assertEqual(len(mail.outbox), 0)
+        mock_send.assert_called_once_with(fail_silently=False)
+        mock_logger_exception.assert_called_once_with('Contact form email delivery failed')
 
     def test_courses_page_status_code(self):
         response = self.client.get(reverse('courses'))
