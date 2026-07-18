@@ -137,6 +137,36 @@ textarea:focus {
     border-bottom: 2px solid var(--primary-color);
 }
 
+.form-messages {
+    margin-bottom: 10px;
+}
+
+.form-message,
+.field-error {
+    font-size: 12px;
+    line-height: 1.4;
+    margin: 4px 0;
+}
+
+.form-message {
+    border-radius: 4px;
+    padding: 8px 10px;
+}
+
+.form-message-success {
+    background: #e8f7ee;
+    color: #1f6f3d;
+}
+
+.form-message-error,
+.field-error {
+    color: #9f2a2a;
+}
+
+.form-message-error {
+    background: #fae8e8;
+}
+
 
 /* About Me */
 

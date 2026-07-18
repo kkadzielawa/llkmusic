@@ -26,6 +26,14 @@ def env_bool(name, default='False'):
     return os.environ.get(name, default).lower() == 'true'
 
 
+def env_list(name, default=''):
+    return [
+        item.strip()
+        for item in os.environ.get(name, default).split(',')
+        if item.strip()
+    ]
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -170,3 +178,22 @@ SECURE_HSTS_PRELOAD = env_bool('SECURE_HSTS_PRELOAD', 'False')
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Email
+EMAIL_BACKEND = os.environ.get(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.console.EmailBackend',
+)
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = env_bool('EMAIL_USE_TLS', 'True')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.environ.get(
+    'DEFAULT_FROM_EMAIL',
+    EMAIL_HOST_USER or 'webmaster@localhost',
+)
+CONTACT_FORM_RECIPIENTS = env_list(
+    'CONTACT_FORM_RECIPIENTS',
+    'kkadzi25@gmail.com',
+)
