@@ -85,6 +85,19 @@ POSTGRES_USER=llkmusic
 POSTGRES_PASSWORD=replace-db-password
 ```
 
+Contact form email delivery also requires SMTP settings. For Gmail, create an app password and use that instead of the normal Gmail account password:
+
+```env
+EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=your-sender@gmail.com
+EMAIL_HOST_PASSWORD=replace-with-app-password
+DEFAULT_FROM_EMAIL=LLKMusic <your-sender@gmail.com>
+CONTACT_FORM_RECIPIENTS=kkadzi25@gmail.com
+```
+
 ## CI/CD
 
 This repo now includes a GitHub Actions workflow at `.github/workflows/deploy.yml` that runs whenever the `deploy` branch receives a push.
