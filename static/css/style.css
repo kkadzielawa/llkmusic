@@ -840,6 +840,120 @@ img {
     justify-content: center;
 }
 
+.blog-entry-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+}
+
+.blog-entry-content > *:first-child {
+    margin-top: 0;
+}
+
+.blog-entry-content > *:last-child {
+    margin-bottom: 0;
+}
+
+.blog-entry-content p,
+.blog-entry-content ul,
+.blog-entry-content ol,
+.blog-entry-content figure,
+.blog-entry-content table,
+.blog-entry-content iframe,
+.blog-entry-content video,
+.blog-entry-content audio {
+    margin-bottom: 1.4rem;
+}
+
+.blog-entry-content ul,
+.blog-entry-content ol {
+    padding-left: 1.5rem;
+}
+
+.blog-entry-content img,
+.blog-entry-content iframe,
+.blog-entry-content video {
+    max-width: 100%;
+}
+
+.blog-entry-content img {
+    height: auto;
+    border-radius: 8px;
+}
+
+.blog-entry-content figure {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.blog-entry-content .media-size-small,
+.blog-entry-content .media-size-medium,
+.blog-entry-content .media-size-large,
+.blog-entry-content .media-size-full {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.blog-entry-content .media-size-small {
+    max-width: 360px;
+}
+
+.blog-entry-content .media-size-medium {
+    max-width: 640px;
+}
+
+.blog-entry-content .media-size-large,
+.blog-entry-content .media-size-full {
+    max-width: 100%;
+}
+
+.blog-entry-content .media-size-small img,
+.blog-entry-content .media-size-medium img,
+.blog-entry-content .media-size-large img,
+.blog-entry-content .media-size-full img,
+.blog-entry-content .media-size-small iframe,
+.blog-entry-content .media-size-medium iframe,
+.blog-entry-content .media-size-large iframe,
+.blog-entry-content .media-size-full iframe,
+.blog-entry-content .media-size-small video,
+.blog-entry-content .media-size-medium video,
+.blog-entry-content .media-size-large video,
+.blog-entry-content .media-size-full video {
+    width: 100%;
+}
+
+.blog-entry-content figcaption {
+    color: #687385;
+    font-size: 0.92rem;
+    text-align: center;
+}
+
+.blog-entry-content iframe {
+    border: 0;
+}
+
+.blog-entry-content .media-embed iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+}
+
+.blog-entry-content audio {
+    width: 100%;
+}
+
+.blog-entry-content table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.blog-entry-content th,
+.blog-entry-content td {
+    border: 1px solid #d9e3ef;
+    padding: 10px;
+    text-align: left;
+}
+
 .blog-detail-image {
     max-width: 360px;
     margin-bottom: 30px;

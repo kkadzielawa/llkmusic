@@ -25,9 +25,9 @@
                 <div class="blog-post-card__body">
                     <h2 style="font-size: 1.8rem; margin-bottom: 10px;"><a href="{% url 'blog:post_detail' post.slug %}"
                             style="color: #333; transition: color 0.2s;">{{ post.title }}</a></h2>
-                    <p style="font-size: 0.9rem; color: #777; margin-bottom: 15px;">Published on {{ post.created_at|date:"F d, Y" }} by {{ post.author.get_full_name|default:post.author.username }}
+                    <p style="font-size: 0.9rem; color: #777; margin-bottom: 15px;">Published on {{ post.created_at|date:"F d, Y" }} by {{ post.get_author_display_name }}
                     </p>
-                    <p style="margin-bottom: 20px; color: #444;">{{ post.body|truncatewords:35 }}</p>
+                    <p style="margin-bottom: 20px; color: #444;">{{ post.get_body_excerpt }}</p>
                     <div>
                         <a href="{% url 'blog:post_detail' post.slug %}" class="btn"
                             style="padding: 8px 20px; font-size: 0.9rem;">Read More</a>

@@ -1,0 +1,116 @@
+.field-body .help {
+    max-width: 760px;
+}
+
+.llk-editor {
+    max-width: 980px;
+}
+
+.llk-editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px;
+    border: 1px solid var(--border-color, #d9d9d9);
+    border-bottom: 0;
+    border-radius: 8px 8px 0 0;
+    background: #f8fafc;
+}
+
+.llk-editor-button {
+    min-height: 32px;
+    padding: 6px 10px;
+    border: 1px solid #c7d2de;
+    border-radius: 6px;
+    background: #fff;
+    color: #243244;
+    cursor: pointer;
+    font: inherit;
+}
+
+.llk-editor-button:hover,
+.llk-editor-button:focus {
+    border-color: #1f70cc;
+}
+
+.llk-editor-canvas {
+    min-height: 560px;
+    padding: 18px;
+    border: 1px solid var(--border-color, #d9d9d9);
+    border-radius: 0 0 8px 8px;
+    background: #fff;
+    color: #243244;
+    font-size: 16px;
+    line-height: 1.7;
+    outline: none;
+    overflow: auto;
+}
+
+.llk-editor-canvas:focus {
+    border-color: #1f70cc;
+    box-shadow: 0 0 0 2px rgba(31, 112, 204, 0.14);
+}
+
+.llk-editor-canvas img,
+.llk-editor-canvas iframe,
+.llk-editor-canvas video {
+    max-width: 100%;
+}
+
+.llk-editor-canvas img {
+    height: auto;
+}
+
+.llk-editor-canvas iframe {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    min-height: 220px;
+    pointer-events: none;
+}
+
+.llk-editor-canvas audio {
+    width: 100%;
+}
+
+.llk-editor-canvas figure {
+    margin: 1.5rem auto;
+}
+
+.llk-editor-canvas .media-size-small {
+    max-width: 360px;
+}
+
+.llk-editor-canvas .media-size-medium {
+    max-width: 640px;
+}
+
+.llk-editor-canvas .media-size-large,
+.llk-editor-canvas .media-size-full {
+    max-width: 100%;
+}
+
+.llk-editor-canvas .media-size-small img,
+.llk-editor-canvas .media-size-medium img,
+.llk-editor-canvas .media-size-large img,
+.llk-editor-canvas .media-size-full img,
+.llk-editor-canvas .media-size-small iframe,
+.llk-editor-canvas .media-size-medium iframe,
+.llk-editor-canvas .media-size-large iframe,
+.llk-editor-canvas .media-size-full iframe,
+.llk-editor-canvas .media-size-small video,
+.llk-editor-canvas .media-size-medium video,
+.llk-editor-canvas .media-size-large video,
+.llk-editor-canvas .media-size-full video {
+    width: 100%;
+}
+
+.llk-editor-canvas .is-selected-media {
+    outline: 3px solid rgba(31, 112, 204, 0.35);
+    outline-offset: 4px;
+}
+
+.llk-editor-status {
+    min-height: 22px;
+    margin: 8px 0 0;
+    color: #445063;
+}

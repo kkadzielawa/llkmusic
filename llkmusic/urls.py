@@ -20,6 +20,8 @@ from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include
 from django.views.generic import TemplateView
 
+from blog import admin_views as blog_admin_views
+
 from .sitemaps import BlogPostSitemap, StaticViewSitemap
 
 
@@ -29,6 +31,8 @@ sitemaps = {
 }
 
 urlpatterns = [
+    path('admin/blog/media-upload/', blog_admin_views.upload_editor_media, name='blog_editor_media_upload'),
+    path('admin/blog/image-upload/', blog_admin_views.upload_editor_image, name='blog_editor_image_upload'),
     path('admin/', admin.site.urls),
     path(
         'robots.txt',

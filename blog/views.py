@@ -56,7 +56,7 @@ class PostDetailView(DetailView):
         if not description:
             description = f'{self.object.title} from the LLKMusic blues and jazz blog.'
         article_url = self.request.build_absolute_uri(self.object.get_absolute_url())
-        author_name = self.object.author.get_full_name() or self.object.author.username
+        author_name = self.object.get_author_display_name()
 
         context['page_title'] = f'{self.object.title} | LLKMusic Blog'
         context['page_description'] = description
