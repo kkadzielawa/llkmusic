@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (menuBtn && navMenu) {
         menuBtn.addEventListener('click', () => {
             navMenu.classList.toggle('show');
+            menuBtn.setAttribute('aria-expanded', navMenu.classList.contains('show') ? 'true' : 'false');
             const icon = menuBtn.querySelector('i');
             if (icon) {
                 if (navMenu.classList.contains('show')) {

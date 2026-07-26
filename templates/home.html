@@ -17,7 +17,10 @@
             </div>
         </div>
         <div class="showcase-form card" id="contact">
-            <h2>Contact Me</h2>
+            <div class="contact-panel-header">
+                <p class="eyebrow">Get in touch</p>
+                <h2>Contact Me</h2>
+            </div>
             {% if messages %}
             <div class="form-messages">
                 {% for message in messages %}
@@ -25,7 +28,7 @@
                 {% endfor %}
             </div>
             {% endif %}
-            <form method="post" action="{% url 'home' %}#contact" novalidate>
+            <form method="post" action="{% url 'home' %}#contact" novalidate class="contact-form">
                 {% csrf_token %}
                 {{ form.website }}
                 <div class="form-control">
@@ -56,7 +59,9 @@
                     <p class="field-error">{{ error }}</p>
                     {% endfor %}
                 </div>
-                <input type="submit" value="Contact" class="btn btn-primary">
+                <div class="contact-form-footer">
+                    <button type="submit" class="btn btn-primary contact-submit">Send</button>
+                </div>
             </form>
         </div>
     </div>
@@ -65,7 +70,7 @@
 <section class="about-me">
     <div class="container grid">
         <div class="about-me-photo">
-            <img src="{% static 'img/personal_photo.png' %}" alt="Konrad Kadzielawa - Blues and Jazz Guitarist">
+            <img src="{% static 'img/logo.jpg' %}" alt="LLKMusic logo">
         </div>
         <div class="about-me-text">
             <p>

@@ -19,7 +19,7 @@
   <meta property="og:description"
     content="{{ page_description|default:'LLKMusic shares blues and jazz guitar lessons, courses, blog posts, and performance services from Chicago musician Konrad Kadzielawa.' }}">
   <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
-  {% static 'img/logo.png' as default_og_image %}
+  {% static 'img/logo.jpg' as default_og_image %}
   <meta property="og:image" content="{% if og_image %}{{ og_image }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ default_og_image }}{% endif %}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ page_title|default:'LLKMusic | Blues & Jazz | Blog & Courses' }}">
@@ -55,9 +55,9 @@
           </li>
         </ul>
       </nav>
-      <div class="menu-btn" id="menu-btn">
+      <button class="menu-btn" id="menu-btn" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-menu">
         <i class="fas fa-bars"></i>
-      </div>
+      </button>
     </div>
   </div>
 

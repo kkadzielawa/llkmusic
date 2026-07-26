@@ -16,12 +16,6 @@
                 <span>By {{ post.author.get_full_name|default:post.author.username }}</span>
             </div>
             
-            {% if post.featured_image %}
-            <div class="blog-detail-image">
-                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="blog-detail-image__img">
-            </div>
-            {% endif %}
-            
             <div style="font-size: 1.1rem; line-height: 1.8; color: #333; white-space: pre-line;">
                 {{ post.body }}
             </div>
