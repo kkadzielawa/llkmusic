@@ -59,6 +59,10 @@ img {
     justify-content: space-between;
 }
 
+.navbar .container {
+    overflow: visible;
+}
+
 .navbar ul {
     display: flex;
 }
@@ -79,6 +83,14 @@ img {
     display: none;
     cursor: pointer;
     color: white;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    font-size: 24px;
+    line-height: 1;
 }
 
 
@@ -87,7 +99,8 @@ img {
 /* Showcase */
 
 .showcase {
-    height: 450px;
+    height: auto;
+    padding: 36px 0 24px;
     background-color: var(--primary-color);
     color: white;
     position: relative;
@@ -95,12 +108,20 @@ img {
 
 .showcase .grid {
     overflow: visible;
+    align-items: center;
 }
 
 .showcase-form {
     position: relative;
-    top: 30px;
-    height: 450px;
+    top: 0;
+    height: auto;
+    min-height: 0;
+    padding: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+    border: 1px solid #d9e3ef;
+    border-top: 6px solid var(--primary-color);
+    box-shadow: 0 18px 40px rgba(17, 39, 71, 0.12);
+    border-radius: 18px;
 }
 
 .showcase-actions {
@@ -110,35 +131,80 @@ img {
     margin-top: 24px;
 }
 
+.showcase-text {
+    align-self: center;
+}
+
+.contact-panel-header {
+    margin-bottom: 12px;
+}
+
+.contact-panel-header h2 {
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+.contact-panel-header p {
+    color: #5d6877;
+    margin: 0;
+}
+
+.contact-form {
+    display: grid;
+    gap: 10px;
+}
+
+.form-control {
+    display: grid;
+    gap: 4px;
+}
+
 .form-control label,
 .form-control input {
     display: block;
     font-size: 12px;
-    margin: 5px 0;
+    margin: 0;
+    width: 100%;
+}
+
+.form-control label {
+    margin: 0;
+    color: #445063;
+    font-weight: 600;
 }
 
 .showcase-form input[type="text"],
 .showcase-form input[type="email"],
-select,
-textarea {
+.showcase-form select,
+.showcase-form textarea {
     border: 0;
     outline: none;
-    border-bottom: 1px solid #ccc;
-    width: 80%;
-    padding: 6px 4px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d6deea;
+    border-radius: 12px;
+    background-color: #f8fafc;
     resize: none;
-    transition: border-color 0.3s ease, border-width 0.1s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    font: inherit;
+    color: #243244;
 }
 
 .showcase-form input[type="text"]:focus,
 .showcase-form input[type="email"]:focus,
-select:focus,
-textarea:focus {
-    border-bottom: 2px solid var(--primary-color);
+.showcase-form select:focus,
+.showcase-form textarea:focus {
+    border-color: rgba(31, 112, 204, 0.55);
+    box-shadow: 0 0 0 4px rgba(31, 112, 204, 0.10);
+    background-color: #fff;
+}
+
+.showcase-form textarea {
+    min-height: 100px;
 }
 
 .form-messages {
-    margin-bottom: 10px;
+    margin-bottom: 4px;
 }
 
 .form-message,
@@ -149,7 +215,7 @@ textarea:focus {
 }
 
 .form-message {
-    border-radius: 4px;
+    border-radius: 12px;
     padding: 8px 10px;
 }
 
@@ -165,6 +231,20 @@ textarea:focus {
 
 .form-message-error {
     background: #fae8e8;
+}
+
+.contact-form-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 2px;
+}
+
+.contact-submit {
+    min-width: 140px;
+    border-radius: 12px;
+    padding: 10px 18px;
 }
 
 
@@ -697,11 +777,18 @@ textarea:focus {
 .about-me-photo img {
     height: 300px;
     width: 300px;
-
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    box-shadow: 0 14px 30px rgba(17, 39, 71, 0.14);
 }
 
 .about-me-text {
     overflow: hidden;
+}
+
+.about-me-text p {
+    line-height: 1.7;
 }
 
 .blog-post-list {
@@ -724,6 +811,9 @@ textarea:focus {
     max-width: 300px;
     min-height: 200px;
     background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .blog-post-card__image {
@@ -731,6 +821,15 @@ textarea:focus {
     height: 100%;
     display: block;
     object-fit: cover;
+}
+
+.blog-post-card__image--fallback {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: linear-gradient(180deg, #f7f9fc 0%, #eef4fb 100%);
+    box-shadow: 0 10px 24px rgba(17, 39, 71, 0.12);
 }
 
 .blog-post-card__body {
@@ -839,6 +938,16 @@ footer ul li a i {
     margin: 10px;
 }
 
+.showcase-form.card {
+    margin: 0;
+    padding: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+    border: 1px solid #d9e3ef;
+    border-top: 6px solid var(--primary-color);
+    box-shadow: 0 18px 40px rgba(17, 39, 71, 0.12);
+    border-radius: 18px;
+}
+
 
 /* Media Queries */
 
@@ -874,12 +983,21 @@ footer ul li a i {
     }
     .showcase-text {
         text-align: center;
-        margin-top: 40px;
+        margin-top: 20px;
     }
     .showcase-actions {
         flex-direction: column;
         align-items: center;
         gap: 18px;
+    }
+    .showcase-form {
+        padding: 16px;
+    }
+    .showcase-form.card {
+        padding: 16px;
+    }
+    .contact-submit {
+        width: 100%;
     }
     .blog-post-card {
         flex-direction: column;
@@ -902,7 +1020,7 @@ footer ul li a i {
 
     /* Mobile Hamburger Menu */
     .menu-btn {
-        display: block;
+        display: inline-flex;
     }
     
     .navbar {
@@ -938,8 +1056,8 @@ footer ul li a i {
     }
 
     .navbar nav.nav-menu ul li a {
-        display: block;
-        width: 100%;
+        display: inline-block;
+        width: auto;
         margin: 0;
         padding: 8px 0;
     }

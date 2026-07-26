@@ -65,7 +65,7 @@ class HomePageView(SEOContextMixin, FormView):
                     '@id': person_id,
                     'name': 'Konrad Kadzielawa',
                     'url': home_url,
-                    'image': self.request.build_absolute_uri(static('img/personal_photo.png')),
+                    'image': self.request.build_absolute_uri(static('img/logo.jpg')),
                     'jobTitle': 'Blues and jazz musician',
                     'sameAs': [
                         'https://www.linkedin.com/in/konradkadzielawa/',
@@ -79,7 +79,7 @@ class HomePageView(SEOContextMixin, FormView):
                     '@id': organization_id,
                     'name': 'LLKMusic',
                     'url': home_url,
-                    'logo': self.request.build_absolute_uri(static('img/logo.png')),
+                    'logo': self.request.build_absolute_uri(static('img/logo.jpg')),
                     'founder': {'@id': person_id},
                 },
                 {

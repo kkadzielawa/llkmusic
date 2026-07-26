@@ -21,7 +21,7 @@ class ContactForm(forms.Form):
     message = forms.CharField(
         min_length=10,
         max_length=3000,
-        widget=forms.Textarea(attrs={'rows': 7, 'placeholder': 'Type Your Message:'}),
+        widget=forms.Textarea(attrs={'rows': 4, 'placeholder': 'Type Your Message:'}),
     )
     website = forms.CharField(required=False, widget=forms.HiddenInput)
 
