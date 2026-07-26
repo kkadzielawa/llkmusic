@@ -30,3 +30,9 @@ class ContactForm(forms.Form):
         if website:
             raise forms.ValidationError('Invalid submission.')
         return website
+
+
+class CheckoutForm(forms.Form):
+    name = forms.CharField(max_length=120)
+    email = forms.EmailField(max_length=254)
+    notes = forms.CharField(max_length=2000, required=False)

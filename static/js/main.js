@@ -8,12 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearCartBtn = document.getElementById('clear-cart');
     const checkoutBtn = document.getElementById('checkout-btn');
     const checkoutNote = document.getElementById('checkout-note');
+    const checkoutForm = document.getElementById('checkout-form');
     const addToCartButtons = document.querySelectorAll('.add-to-cart');
     const currency = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
     });
+    const MAX_CART_QUANTITY = 20;
     let cart = loadCart();
+    let checkoutMessageTimeout;
 
     if (menuBtn && navMenu) {
         menuBtn.addEventListener('click', () => {
@@ -70,13 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (checkoutBtn) {
-        checkoutBtn.addEventListener('click', () => {
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', (event) => {
+            event.preventDefault();
             if (!cart.length) {
                 return;
             }
 
-            setCheckoutMessage('Thanks! Checkout integration can be connected next.');
+            submitCheckout();
         });
     }
 
@@ -86,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const existingItem = cart.find((item) => item.id === product.id);
 
         if (existingItem) {
-            existingItem.quantity += 1;
+            existingItem.quantity = Math.min(existingItem.quantity + 1, MAX_CART_QUANTITY);
         } else {
             cart.push({ ...product, quantity: 1 });
         }
@@ -103,7 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     return item;
                 }
 
-                const nextQuantity = action === 'increase' ? item.quantity + 1 : item.quantity - 1;
+                const nextQuantity = action === 'increase'
+                    ? Math.min(item.quantity + 1, MAX_CART_QUANTITY)
+                    : item.quantity - 1;
                 return { ...item, quantity: nextQuantity };
             })
             .filter((item) => item.quantity > 0);
@@ -141,29 +147,77 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        cartItemsEl.innerHTML = cart.map((item) => `
+        cartItemsEl.innerHTML = cart.map((item) => {
+            const itemTotal = item.price * item.quantity;
+
+            return `
             <div class="cart-item">
                 <div>
                     <p class="cart-item-name">${escapeHtml(item.name)}</p>
                     <p class="cart-item-price">${currency.format(item.price)} each</p>
+                    <p class="cart-item-total">${currency.format(itemTotal)} total</p>
                 </div>
                 <div class="quantity-controls" aria-label="Quantity controls for ${escapeHtml(item.name)}">
                     <button type="button" data-cart-action="decrease" data-product-id="${escapeHtml(item.id)}" aria-label="Decrease ${escapeHtml(item.name)} quantity">-</button>
                     <span>${item.quantity}</span>
-                    <button type="button" data-cart-action="increase" data-product-id="${escapeHtml(item.id)}" aria-label="Increase ${escapeHtml(item.name)} quantity">+</button>
+                    <button type="button" data-cart-action="increase" data-product-id="${escapeHtml(item.id)}" aria-label="Increase ${escapeHtml(item.name)} quantity" ${item.quantity >= MAX_CART_QUANTITY ? 'disabled' : ''}>+</button>
                 </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
     }
 
     function loadCart() {
         try {
             const savedCart = window.localStorage.getItem('llkmusic-cart');
             const parsedCart = savedCart ? JSON.parse(savedCart) : [];
-            return Array.isArray(parsedCart) ? parsedCart : [];
+            return Array.isArray(parsedCart)
+                ? mergeCartItems(parsedCart.map(normalizeCartItem).filter(Boolean))
+                : [];
         } catch (error) {
             return [];
         }
+    }
+
+    function mergeCartItems(items) {
+        const itemsById = new Map();
+
+        items.forEach((item) => {
+            const existingItem = itemsById.get(item.id);
+            if (existingItem) {
+                existingItem.quantity = Math.min(
+                    existingItem.quantity + item.quantity,
+                    MAX_CART_QUANTITY
+                );
+                return;
+            }
+
+            itemsById.set(item.id, { ...item });
+        });
+
+        return Array.from(itemsById.values());
+    }
+
+    function normalizeCartItem(item) {
+        if (!item || typeof item !== 'object') {
+            return null;
+        }
+
+        const id = String(item.id || '').trim();
+        const name = String(item.name || '').trim();
+        const price = Number(item.price);
+        const quantity = Math.trunc(Number(item.quantity));
+
+        if (!id || !name || !Number.isFinite(price) || price < 0 || !Number.isFinite(quantity)) {
+            return null;
+        }
+
+        return {
+            id,
+            name,
+            price,
+            quantity: Math.min(Math.max(quantity, 1), MAX_CART_QUANTITY),
+        };
     }
 
     function saveCart() {
@@ -174,10 +228,86 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function setCheckoutMessage(message) {
+    function submitCheckout() {
+        if (!checkoutForm.reportValidity()) {
+            return;
+        }
+
+        const checkoutUrl = checkoutForm.dataset.checkoutUrl;
+        const formData = new FormData(checkoutForm);
+        const payload = {
+            customer: {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                notes: formData.get('notes'),
+            },
+            items: cart.map((item) => ({
+                id: item.id,
+                quantity: item.quantity,
+            })),
+        };
+
+        setCheckoutMessage('Submitting your order...', 'info');
+        if (checkoutBtn) {
+            checkoutBtn.disabled = true;
+        }
+
+        fetch(checkoutUrl, {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken(checkoutForm),
+            },
+        })
+            .then((response) => response.json().then((data) => {
+                if (!response.ok) {
+                    throw new Error(data.error || 'Checkout failed.');
+                }
+                return data;
+            }))
+            .then((data) => {
+                cart = [];
+                saveCart();
+                renderCart();
+                checkoutForm.reset();
+                setCheckoutMessage(data.message, 'success', 5000);
+            })
+            .catch((error) => {
+                setCheckoutMessage(error.message, 'error', 5000);
+                renderCart();
+            });
+    }
+
+    function setCheckoutMessage(message, type = '', autoClearMs = 0) {
+        if (checkoutMessageTimeout) {
+            window.clearTimeout(checkoutMessageTimeout);
+            checkoutMessageTimeout = null;
+        }
+
         if (checkoutNote) {
             checkoutNote.textContent = message;
+            checkoutNote.className = type ? `checkout-note checkout-note-${type}` : 'checkout-note';
+
+            if (message && autoClearMs) {
+                checkoutMessageTimeout = window.setTimeout(() => {
+                    checkoutNote.textContent = '';
+                    checkoutNote.className = 'checkout-note';
+                    checkoutMessageTimeout = null;
+                }, autoClearMs);
+            }
         }
+    }
+
+    function getCsrfToken(form) {
+        const tokenInput = form.querySelector('input[name="csrfmiddlewaretoken"]');
+        if (tokenInput) {
+            return tokenInput.value;
+        }
+
+        const match = document.cookie.match(/(?:^|; )csrftoken=([^;]+)/);
+        return match ? decodeURIComponent(match[1]) : '';
     }
 
     function escapeHtml(value) {
