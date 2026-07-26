@@ -48,6 +48,10 @@ class BlogTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'My Blues Improvisation')
         self.assertContains(response, 'Some body text about blues guitar techniques.')
+        self.assertContains(response, '<title>My Blues Improvisation | LLKMusic Blog</title>', html=False)
+        self.assertContains(response, 'property="og:type" content="article"', html=False)
+        self.assertContains(response, 'application/ld+json')
+        self.assertContains(response, '"@type": "Article"')
         self.assertTemplateUsed(response, 'blog/post_detail.html')
 
     @patch('blog.views.connection.introspection.table_names', return_value=[])
