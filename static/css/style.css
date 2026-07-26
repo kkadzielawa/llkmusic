@@ -648,9 +648,14 @@ img {
     margin: 0 0 4px;
 }
 
-.cart-item-price {
+.cart-item-price,
+.cart-item-total {
     color: #687385;
     margin: 0;
+}
+
+.cart-item-total {
+    font-weight: 700;
 }
 
 .quantity-controls {
@@ -670,6 +675,11 @@ img {
     cursor: pointer;
     font-size: 16px;
     font-weight: 700;
+}
+
+.quantity-controls button:disabled {
+    color: #9aa7b8;
+    cursor: not-allowed;
 }
 
 .quantity-controls span {
@@ -701,6 +711,34 @@ img {
     color: #14643b;
     font-weight: 700;
     text-align: center;
+}
+
+.checkout-note-error {
+    color: #9f2a2a;
+}
+
+.checkout-note-info {
+    color: #445063;
+}
+
+.checkout-form {
+    border-top: 1px solid #e1e7ef;
+    margin-top: 16px;
+    padding-top: 16px;
+}
+
+.checkout-fields {
+    display: grid;
+    gap: 12px;
+}
+
+.checkout-form input,
+.checkout-form textarea {
+    width: 100%;
+    border: 1px solid #d6deea;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font: inherit;
 }
 
 @keyframes button-pop {

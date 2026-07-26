@@ -12,41 +12,19 @@
         </div>
 
         <div class="product-grid" aria-label="Courses">
-            <article class="product-card" data-product-id="blues-foundations" data-product-name="Blues Guitar Foundations" data-product-price="49">
+            {% for product in products %}
+            <article class="product-card" data-product-id="{{ product.slug }}" data-product-name="{{ product.name }}" data-product-price="{{ product.price }}">
                 <div>
-                    <span class="product-type">Course</span>
-                    <h2>Blues Guitar Foundations</h2>
-                    <p>Shuffle rhythm, turnarounds, pentatonic phrasing, and practice tracks for building a stronger blues vocabulary.</p>
+                    <span class="product-type">{{ product.category }}</span>
+                    <h2>{{ product.name }}</h2>
+                    <p>{{ product.description }}</p>
                 </div>
                 <div class="product-action">
-                    <strong>$49</strong>
+                    <strong>${{ product.price|floatformat:0 }}</strong>
                     <button type="button" class="btn btn-primary add-to-cart">Add to Cart</button>
                 </div>
             </article>
-
-            <article class="product-card" data-product-id="jazz-chords" data-product-name="Jazz Chord Starter Pack" data-product-price="35">
-                <div>
-                    <span class="product-type">Song Pack</span>
-                    <h2>Jazz Chord Starter Pack</h2>
-                    <p>Playable chord shapes, comping studies, and lead sheets for common jazz progressions.</p>
-                </div>
-                <div class="product-action">
-                    <strong>$35</strong>
-                    <button type="button" class="btn btn-primary add-to-cart">Add to Cart</button>
-                </div>
-            </article>
-
-            <article class="product-card" data-product-id="private-session" data-product-name="Private Learning Session" data-product-price="75">
-                <div>
-                    <span class="product-type">Lesson</span>
-                    <h2>Private Learning Session</h2>
-                    <p>A focused one-on-one session for technique, repertoire, ear training, improvisation, or recording questions.</p>
-                </div>
-                <div class="product-action">
-                    <strong>$75</strong>
-                    <button type="button" class="btn btn-primary add-to-cart">Add to Cart</button>
-                </div>
-            </article>
+            {% endfor %}
         </div>
 
         <div class="courses-cta card">
