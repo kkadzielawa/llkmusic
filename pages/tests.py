@@ -143,3 +143,39 @@ class PagesTests(TestCase):
         self.assertContains(response, 'Cover Band Performances')
         self.assertContains(response, 'Recording Sessions')
         self.assertContains(response, 'Mixing and Mastering')
+
+
+@override_settings(SECURE_SSL_REDIRECT=False)
+class SEOTests(TestCase):
+    def test_homepage_has_search_metadata(self):
+        response = self.client.get(reverse('home'))
+        self.assertContains(
+            response,
+            '<title>LLKMusic | Blues &amp; Jazz Guitar Lessons and Courses</title>',
+            html=False,
+        )
+        self.assertContains(response, 'name="description"', html=False)
+        self.assertContains(response, 'property="og:site_name" content="LLKMusic"', html=False)
+        self.assertContains(response, '<link rel="canonical" href="http://testserver/">', html=False)
+        self.assertContains(response, 'application/ld+json')
+        self.assertContains(response, '"@type": "WebSite"')
+
+    def test_robots_txt_lists_sitemap(self):
+        response = self.client.get(reverse('robots_txt'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'User-agent: *')
+        self.assertContains(response, 'Sitemap:')
+        self.assertContains(response, reverse('sitemap_xml'))
+
+    def test_sitemap_contains_public_pages_and_excludes_cart(self):
+        response = self.client.get(reverse('sitemap_xml'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, reverse('home'))
+        self.assertContains(response, reverse('blog:post_list'))
+        self.assertContains(response, reverse('courses'))
+        self.assertContains(response, reverse('services'))
+        self.assertNotContains(response, reverse('cart'))
+
+    def test_cart_page_is_noindex(self):
+        response = self.client.get(reverse('cart'))
+        self.assertContains(response, 'name="robots" content="noindex, nofollow"', html=False)
