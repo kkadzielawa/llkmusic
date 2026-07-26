@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ post.title }} | LLKMusic{% endblock %}
+{% block title %}{{ page_title|default:post.title }}{% endblock %}
 
 {% block content %}
 <section class="blog-detail-section" style="padding: 50px 0;">
