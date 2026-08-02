@@ -22,14 +22,15 @@ logger = logging.getLogger(__name__)
 
 
 class SEOContextMixin:
-    page_title = 'LLKMusic | Blues & Jazz Guitar Lessons, Blog & Courses'
+    page_title = 'LLKMusic by Konrad Kadzielawa | Blues & Jazz Chicago'
     page_description = (
-        'LLKMusic shares blues and jazz guitar lessons, courses, blog posts, '
-        'and performance services from Chicago musician Konrad Kadzielawa.'
+        'LLKMusic by Konrad Kadzielawa shares blues and jazz guitar lessons, '
+        'courses, blog posts, llkmusicvideos, and Chicago music services.'
     )
     page_keywords = (
-        'LLKMusic, blues guitar lessons, jazz guitar lessons, Chicago musician, '
-        'guitar courses, music blog'
+        'LLKMusic, Konrad Kadzielawa, llkmusicvideos, LLKMusicVideos, '
+        'blues & jazz Chicago, Chicago blues guitar, Chicago jazz guitar, '
+        'guitar lessons Chicago, guitar courses, music blog'
     )
     og_type = 'website'
     robots_content = 'index, follow'
@@ -53,14 +54,17 @@ class SEOContextMixin:
 class HomePageView(SEOContextMixin, FormView):
     template_name = 'home.html'
     form_class = ContactForm
-    page_title = 'LLKMusic | Blues & Jazz Guitar Lessons and Courses'
+    page_title = 'LLKMusic by Konrad Kadzielawa | Blues & Jazz Chicago'
     page_description = (
-        'Learn blues and jazz guitar with LLKMusic through blog lessons, '
-        'downloadable courses, private coaching, and Chicago-based music services.'
+        'LLKMusic by Chicago musician Konrad Kadzielawa offers blues and jazz '
+        'guitar lessons, courses, blog posts, llkmusicvideos, and music services.'
     )
 
     def get_json_ld(self):
-        home_url = self.request.build_absolute_uri(reverse('home'))
+        home_url = f'{settings.SITE_URL}{reverse("home")}'
+        blog_url = f'{settings.SITE_URL}{reverse("blog:post_list")}'
+        courses_url = f'{settings.SITE_URL}{reverse("courses")}'
+        services_url = f'{settings.SITE_URL}{reverse("services")}'
         person_id = f'{home_url}#konrad-kadzielawa'
         organization_id = f'{home_url}#organization'
         return {
@@ -70,9 +74,22 @@ class HomePageView(SEOContextMixin, FormView):
                     '@type': 'Person',
                     '@id': person_id,
                     'name': 'Konrad Kadzielawa',
+                    'alternateName': ['kkadzielawa', 'LLKMusic', 'llkmusicvideos'],
                     'url': home_url,
-                    'image': self.request.build_absolute_uri(static('img/logo.jpg')),
-                    'jobTitle': 'Blues and jazz musician',
+                    'image': f'{settings.SITE_URL}{static("img/logo.jpg")}',
+                    'jobTitle': 'Blues and jazz musician, guitarist, and music educator',
+                    'homeLocation': {
+                        '@type': 'Place',
+                        'name': 'Chicago, Illinois',
+                    },
+                    'knowsAbout': [
+                        'Blues guitar',
+                        'Jazz guitar',
+                        'Chicago blues',
+                        'Improvisation',
+                        'Ear training',
+                        'Guitar lessons',
+                    ],
                     'sameAs': [
                         'https://www.linkedin.com/in/konradkadzielawa/',
                         'https://www.youtube.com/@llkmusicvideos',
@@ -84,17 +101,43 @@ class HomePageView(SEOContextMixin, FormView):
                     '@type': 'Organization',
                     '@id': organization_id,
                     'name': 'LLKMusic',
+                    'alternateName': ['LLK Music', 'llkmusic', 'LLKMusicVideos', 'llkmusicvideos'],
+                    'description': self.page_description,
                     'url': home_url,
-                    'logo': self.request.build_absolute_uri(static('img/logo.jpg')),
+                    'logo': f'{settings.SITE_URL}{static("img/logo.jpg")}',
                     'founder': {'@id': person_id},
+                    'areaServed': {
+                        '@type': 'City',
+                        'name': 'Chicago',
+                    },
+                    'sameAs': [
+                        'https://www.youtube.com/@llkmusicvideos',
+                        'https://www.instagram.com/konradkadzielawa/',
+                        'https://www.linkedin.com/in/konradkadzielawa/',
+                    ],
                 },
                 {
                     '@type': 'WebSite',
                     '@id': f'{home_url}#website',
                     'name': 'LLKMusic',
+                    'alternateName': ['llkmusic', 'LLKMusicVideos', 'llkmusicvideos'],
                     'url': home_url,
                     'publisher': {'@id': organization_id},
+                    'inLanguage': 'en-US',
+                    'about': {'@id': person_id},
                 },
+                *[
+                    {
+                        '@type': 'SiteNavigationElement',
+                        'name': name,
+                        'url': url,
+                    }
+                    for name, url in [
+                        ('Blog', blog_url),
+                        ('Courses', courses_url),
+                        ('Services', services_url),
+                    ]
+                ],
             ],
         }
 
@@ -137,16 +180,44 @@ class HomePageView(SEOContextMixin, FormView):
 
 class CoursesPageView(SEOContextMixin, TemplateView):
     template_name = 'courses.html'
-    page_title = 'Blues and Jazz Guitar Courses | LLKMusic'
+    page_title = 'Blues and Jazz Guitar Courses | LLKMusic Chicago'
     page_description = (
-        'Explore LLKMusic courses and song packs for blues guitar foundations, '
-        'jazz chords, private lessons, improvisation, rhythm, and practice tracks.'
+        'Explore LLKMusic courses from Konrad Kadzielawa for blues guitar '
+        'foundations, jazz chords, private lessons, improvisation, and practice.'
     )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['products'] = Course.objects.filter(is_available=True)
         return context
+
+    def get_json_ld(self):
+        courses_url = f'{settings.SITE_URL}{reverse("courses")}'
+        products = Course.objects.filter(is_available=True)
+        return {
+            '@context': 'https://schema.org',
+            '@type': 'OfferCatalog',
+            'name': 'LLKMusic blues and jazz guitar courses',
+            'url': courses_url,
+            'description': self.page_description,
+            'provider': {
+                '@type': 'Person',
+                'name': 'Konrad Kadzielawa',
+                'url': settings.SITE_URL,
+            },
+            'itemListElement': [
+                {
+                    '@type': 'Offer',
+                    'name': product.name,
+                    'description': product.description,
+                    'price': str(product.price),
+                    'priceCurrency': 'USD',
+                    'availability': 'https://schema.org/InStock',
+                    'url': courses_url,
+                }
+                for product in products
+            ],
+        }
 
 
 class CartPageView(SEOContextMixin, TemplateView):
@@ -297,8 +368,47 @@ class CheckoutView(View):
 
 class ServicesPageView(SEOContextMixin, TemplateView):
     template_name = 'services.html'
-    page_title = 'Music Services, Lessons, and Booking | LLKMusic'
+    page_title = 'Chicago Blues and Jazz Music Services | LLKMusic'
     page_description = (
-        'Book LLKMusic for blues and jazz-forward performances, recording sessions, '
-        'music production, mixing, mastering, private lessons, and coaching.'
+        'Book LLKMusic and Konrad Kadzielawa in Chicago for blues and jazz-forward '
+        'performances, recording sessions, production, private lessons, and coaching.'
     )
+
+    def get_json_ld(self):
+        services_url = f'{settings.SITE_URL}{reverse("services")}'
+        return {
+            '@context': 'https://schema.org',
+            '@type': 'ProfessionalService',
+            'name': 'LLKMusic',
+            'alternateName': ['LLK Music', 'llkmusic', 'LLKMusicVideos', 'llkmusicvideos'],
+            'url': services_url,
+            'description': self.page_description,
+            'areaServed': {
+                '@type': 'City',
+                'name': 'Chicago',
+            },
+            'founder': {
+                '@type': 'Person',
+                'name': 'Konrad Kadzielawa',
+            },
+            'sameAs': [
+                'https://www.youtube.com/@llkmusicvideos',
+                'https://www.instagram.com/konradkadzielawa/',
+                'https://www.linkedin.com/in/konradkadzielawa/',
+            ],
+            'hasOfferCatalog': {
+                '@type': 'OfferCatalog',
+                'name': 'LLKMusic services',
+                'itemListElement': [
+                    {'@type': 'Offer', 'itemOffered': {'@type': 'Service', 'name': service_name}}
+                    for service_name in [
+                        'Cover band performances',
+                        'Recording sessions',
+                        'Music production',
+                        'Mixing and mastering',
+                        'Private lessons and coaching',
+                        'Event and music booking',
+                    ]
+                ],
+            },
+        }

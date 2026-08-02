@@ -89,6 +89,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "pages.context_processors.site_metadata",
             ],
         },
     },
@@ -199,3 +200,6 @@ CONTACT_FORM_RECIPIENTS = env_list(
     'CONTACT_FORM_RECIPIENTS',
     'kkadzi25@gmail.com',
 )
+
+# Public site identity used for canonical URLs, robots.txt, and structured data.
+SITE_URL = os.environ.get('SITE_URL', 'https://www.llkmusic.com').rstrip('/')

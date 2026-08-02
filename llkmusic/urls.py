@@ -16,13 +16,13 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include
 from django.views.generic import TemplateView
 
 from blog import admin_views as blog_admin_views
 
 from .sitemaps import BlogPostSitemap, StaticViewSitemap
+from .views import canonical_sitemap
 
 
 sitemaps = {
@@ -39,7 +39,7 @@ urlpatterns = [
         TemplateView.as_view(template_name='robots.txt', content_type='text/plain'),
         name='robots_txt',
     ),
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='sitemap_xml'),
+    path('sitemap.xml', canonical_sitemap, {'sitemaps': sitemaps}, name='sitemap_xml'),
     path('', include('pages.urls')),
     path('blog/', include('blog.urls')),
 ]

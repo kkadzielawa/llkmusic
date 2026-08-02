@@ -74,6 +74,7 @@ For production, set at least these values in `.env` on the droplet:
 DEBUG=False
 ALLOWED_HOSTS=www.llkmusic.com,llkmusic.com
 CSRF_TRUSTED_ORIGINS=https://www.llkmusic.com,https://llkmusic.com
+SITE_URL=https://www.llkmusic.com
 DATABASE_URL=postgres://llkmusic:replace-db-password@db:5432/llkmusic
 SESSION_COOKIE_SECURE=True
 CSRF_COOKIE_SECURE=True
