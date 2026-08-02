@@ -1,7 +1,9 @@
 import json
 
+from django.conf import settings
 from django.db import OperationalError, connection
 from django.core.serializers.json import DjangoJSONEncoder
+from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.text import Truncator
 from django.views.generic import ListView, DetailView
@@ -31,12 +33,33 @@ class PostListView(ListView):
         context = super().get_context_data(**kwargs)
         context['page_title'] = 'Blues and Jazz Music Blog | LLKMusic'
         context['page_description'] = (
-            'Read LLKMusic blog posts about blues guitar, jazz harmony, improvisation, '
-            'ear training, repertoire, technique, piano, and practical music learning.'
+            'Read LLKMusic posts by Konrad Kadzielawa about blues guitar, jazz '
+            'harmony, improvisation, ear training, Chicago blues, piano, and videos.'
         )
         context['page_keywords'] = (
-            'blues guitar blog, jazz guitar blog, improvisation lessons, ear training, '
-            'guitar technique, LLKMusic'
+            'LLKMusic blog, Konrad Kadzielawa, llkmusicvideos, blues guitar blog, '
+            'jazz guitar blog, Chicago blues, improvisation lessons, ear training'
+        )
+        context['json_ld'] = json.dumps(
+            {
+                '@context': 'https://schema.org',
+                '@type': 'Blog',
+                'name': 'LLKMusic Blog',
+                'url': f'{settings.SITE_URL}{reverse("blog:post_list")}',
+                'description': context['page_description'],
+                'publisher': {
+                    '@type': 'Organization',
+                    'name': 'LLKMusic',
+                    'alternateName': ['LLK Music', 'llkmusic', 'LLKMusicVideos', 'llkmusicvideos'],
+                    'url': settings.SITE_URL,
+                },
+                'author': {
+                    '@type': 'Person',
+                    'name': 'Konrad Kadzielawa',
+                    'url': settings.SITE_URL,
+                },
+            },
+            cls=DjangoJSONEncoder,
         )
         return context
 
@@ -55,17 +78,18 @@ class PostDetailView(DetailView):
         description = Truncator(body_text).chars(160, truncate='...')
         if not description:
             description = f'{self.object.title} from the LLKMusic blues and jazz blog.'
-        article_url = self.request.build_absolute_uri(self.object.get_absolute_url())
+        article_url = f'{settings.SITE_URL}{self.object.get_absolute_url()}'
         author_name = self.object.get_author_display_name()
 
         context['page_title'] = f'{self.object.title} | LLKMusic Blog'
         context['page_description'] = description
         context['page_keywords'] = (
-            'blues guitar, jazz guitar, music lessons, improvisation, LLKMusic'
+            'blues guitar, jazz guitar, Chicago blues, music lessons, improvisation, '
+            'LLKMusic, Konrad Kadzielawa, llkmusicvideos'
         )
         context['og_type'] = 'article'
         if self.object.featured_image:
-            context['og_image'] = self.request.build_absolute_uri(self.object.featured_image.url)
+            context['og_image'] = f'{settings.SITE_URL}{self.object.featured_image.url}'
         context['json_ld'] = json.dumps(
             {
                 '@context': 'https://schema.org',
@@ -77,10 +101,12 @@ class PostDetailView(DetailView):
                 'author': {
                     '@type': 'Person',
                     'name': author_name,
+                    'url': settings.SITE_URL,
                 },
                 'publisher': {
                     '@type': 'Organization',
                     'name': 'LLKMusic',
+                    'url': settings.SITE_URL,
                 },
                 'mainEntityOfPage': article_url,
                 'url': article_url,

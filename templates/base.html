@@ -8,25 +8,30 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description"
-    content="{% block meta_description %}{{ page_description|default:'LLKMusic shares blues and jazz guitar lessons, courses, blog posts, and performance services from Chicago musician Konrad Kadzielawa.' }}{% endblock %}">
+    content="{% block meta_description %}{{ page_description|default:'LLKMusic by Konrad Kadzielawa shares blues and jazz guitar lessons, courses, blog posts, videos, and Chicago music services.' }}{% endblock %}">
   <meta name="keywords"
-    content="{{ page_keywords|default:'LLKMusic, blues guitar lessons, jazz guitar lessons, Chicago musician, guitar courses, music blog' }}">
+    content="{{ page_keywords|default:'LLKMusic, Konrad Kadzielawa, llkmusicvideos, blues & jazz Chicago, Chicago blues guitar, jazz guitar lessons, guitar courses, music blog' }}">
   <meta name="author" content="Konrad Kadzielawa">
+  <meta name="application-name" content="LLKMusic">
   <meta name="robots" content="{{ robots_content|default:'index, follow' }}">
+  <meta name="theme-color" content="#1f6f78">
+  <meta property="og:locale" content="en_US">
   <meta property="og:site_name" content="LLKMusic">
   <meta property="og:type" content="{{ og_type|default:'website' }}">
   <meta property="og:title" content="{{ page_title|default:'LLKMusic | Blues & Jazz | Blog & Courses' }}">
   <meta property="og:description"
-    content="{{ page_description|default:'LLKMusic shares blues and jazz guitar lessons, courses, blog posts, and performance services from Chicago musician Konrad Kadzielawa.' }}">
-  <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
-  {% static 'img/logo.jpg' as default_og_image %}
-  <meta property="og:image" content="{% if og_image %}{{ og_image }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ default_og_image }}{% endif %}">
+    content="{{ page_description|default:'LLKMusic by Konrad Kadzielawa shares blues and jazz guitar lessons, courses, blog posts, videos, and Chicago music services.' }}">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:image" content="{% if og_image %}{{ og_image }}{% else %}{{ default_og_image }}{% endif %}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ page_title|default:'LLKMusic | Blues & Jazz | Blog & Courses' }}">
   <meta name="twitter:description"
-    content="{{ page_description|default:'LLKMusic shares blues and jazz guitar lessons, courses, blog posts, and performance services from Chicago musician Konrad Kadzielawa.' }}">
-  <meta name="twitter:image" content="{% if og_image %}{{ og_image }}{% else %}{{ request.scheme }}://{{ request.get_host }}{{ default_og_image }}{% endif %}">
-  <link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
+    content="{{ page_description|default:'LLKMusic by Konrad Kadzielawa shares blues and jazz guitar lessons, courses, blog posts, videos, and Chicago music services.' }}">
+  <meta name="twitter:image" content="{% if og_image %}{{ og_image }}{% else %}{{ default_og_image }}{% endif %}">
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="me" href="https://www.youtube.com/@llkmusicvideos">
+  <link rel="me" href="https://www.linkedin.com/in/konradkadzielawa/">
+  <link rel="me" href="https://www.instagram.com/konradkadzielawa/">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <script src="https://kit.fontawesome.com/6e526d197e.js" crossorigin="anonymous"></script>
   <title>{% block title %}{{ page_title|default:'LLKMusic | Blues & Jazz | Blog & Courses' }}{% endblock %}</title>
