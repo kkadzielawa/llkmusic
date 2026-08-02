@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: {{ request.scheme }}://{{ request.get_host }}{% url 'sitemap_xml' %}
+Sitemap: {{ site_url }}{% url 'sitemap_xml' %}

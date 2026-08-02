@@ -24,7 +24,8 @@ class PagesTests(TestCase):
 
     def test_homepage_contains_correct_html(self):
         response = self.client.get(reverse('home'))
-        self.assertContains(response, 'Welcome to LLKMusic')
+        self.assertContains(response, 'LLKMusic by Konrad Kadzielawa')
+        self.assertContains(response, 'llkmusicvideos')
         self.assertContains(response, 'Contact Me')
         self.assertContains(response, 'action="/#contact"')
         self.assertContains(response, 'name="name"')
@@ -383,35 +384,39 @@ class CheckoutTests(TestCase):
         self.assertEqual(Order.objects.count(), 0)
 
 
-@override_settings(SECURE_SSL_REDIRECT=False)
+@override_settings(SECURE_SSL_REDIRECT=False, ALLOWED_HOSTS=['testserver', 'www.llkmusic.com'])
 class SEOTests(TestCase):
     def test_homepage_has_search_metadata(self):
         response = self.client.get(reverse('home'))
         self.assertContains(
             response,
-            '<title>LLKMusic | Blues &amp; Jazz Guitar Lessons and Courses</title>',
+            '<title>LLKMusic by Konrad Kadzielawa | Blues &amp; Jazz Chicago</title>',
             html=False,
         )
         self.assertContains(response, 'name="description"', html=False)
+        self.assertContains(response, 'Konrad Kadzielawa', html=False)
+        self.assertContains(response, 'llkmusicvideos', html=False)
+        self.assertContains(response, 'blues &amp; jazz Chicago', html=False)
         self.assertContains(response, 'property="og:site_name" content="LLKMusic"', html=False)
-        self.assertContains(response, '<link rel="canonical" href="http://testserver/">', html=False)
+        self.assertContains(response, '<link rel="canonical" href="https://www.llkmusic.com/">', html=False)
         self.assertContains(response, 'application/ld+json')
         self.assertContains(response, '"@type": "WebSite"')
+        self.assertContains(response, '"alternateName": ["LLK Music", "llkmusic", "LLKMusicVideos", "llkmusicvideos"]', html=False)
 
     def test_robots_txt_lists_sitemap(self):
         response = self.client.get(reverse('robots_txt'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'User-agent: *')
         self.assertContains(response, 'Sitemap:')
-        self.assertContains(response, reverse('sitemap_xml'))
+        self.assertContains(response, f'https://www.llkmusic.com{reverse("sitemap_xml")}')
 
     def test_sitemap_contains_public_pages_and_excludes_cart(self):
         response = self.client.get(reverse('sitemap_xml'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, reverse('home'))
-        self.assertContains(response, reverse('blog:post_list'))
-        self.assertContains(response, reverse('courses'))
-        self.assertContains(response, reverse('services'))
+        self.assertContains(response, 'https://www.llkmusic.com/')
+        self.assertContains(response, f'https://www.llkmusic.com{reverse("blog:post_list")}')
+        self.assertContains(response, f'https://www.llkmusic.com{reverse("courses")}')
+        self.assertContains(response, f'https://www.llkmusic.com{reverse("services")}')
         self.assertNotContains(response, reverse('cart'))
 
     def test_cart_page_is_noindex(self):
