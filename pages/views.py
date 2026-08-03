@@ -22,10 +22,11 @@ logger = logging.getLogger(__name__)
 
 
 class SEOContextMixin:
-    page_title = 'LLKMusic by Konrad Kadzielawa | Blues & Jazz Chicago'
+    page_title = 'LLKMusic'
     page_description = (
         'LLKMusic by Konrad Kadzielawa shares blues and jazz guitar lessons, '
-        'courses, blog posts, llkmusicvideos, and Chicago music services.'
+        'courses, blog posts, the associated YouTube channel llkmusicvideos, '
+        'and Chicago music services.'
     )
     page_keywords = (
         'LLKMusic, Konrad Kadzielawa, llkmusicvideos, LLKMusicVideos, '
@@ -54,10 +55,11 @@ class SEOContextMixin:
 class HomePageView(SEOContextMixin, FormView):
     template_name = 'home.html'
     form_class = ContactForm
-    page_title = 'LLKMusic by Konrad Kadzielawa | Blues & Jazz Chicago'
+    page_title = 'LLKMusic'
     page_description = (
         'LLKMusic by Chicago musician Konrad Kadzielawa offers blues and jazz '
-        'guitar lessons, courses, blog posts, llkmusicvideos, and music services.'
+        'guitar lessons, courses, blog posts, the associated YouTube channel '
+        'llkmusicvideos, and music services.'
     )
 
     def get_json_ld(self):

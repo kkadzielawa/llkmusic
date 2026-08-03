@@ -24,8 +24,11 @@ class PagesTests(TestCase):
 
     def test_homepage_contains_correct_html(self):
         response = self.client.get(reverse('home'))
-        self.assertContains(response, 'LLKMusic by Konrad Kadzielawa')
-        self.assertContains(response, 'llkmusicvideos')
+        self.assertContains(response, '<h1>LLKMusic</h1>', html=False)
+        self.assertContains(response, 'associated YouTube channel')
+        self.assertContains(response, 'LLKMusicVideos')
+        self.assertContains(response, 'fab fa-youtube')
+        self.assertContains(response, 'class="youtube-channel-link"', html=False)
         self.assertContains(response, 'Contact Me')
         self.assertContains(response, 'action="/#contact"')
         self.assertContains(response, 'name="name"')
@@ -390,11 +393,12 @@ class SEOTests(TestCase):
         response = self.client.get(reverse('home'))
         self.assertContains(
             response,
-            '<title>LLKMusic by Konrad Kadzielawa | Blues &amp; Jazz Chicago</title>',
+            '<title>LLKMusic</title>',
             html=False,
         )
         self.assertContains(response, 'name="description"', html=False)
         self.assertContains(response, 'Konrad Kadzielawa', html=False)
+        self.assertContains(response, 'associated YouTube channel', html=False)
         self.assertContains(response, 'llkmusicvideos', html=False)
         self.assertContains(response, 'blues &amp; jazz Chicago', html=False)
         self.assertContains(response, 'property="og:site_name" content="LLKMusic"', html=False)
