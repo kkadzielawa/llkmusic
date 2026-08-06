@@ -393,7 +393,7 @@ class SEOTests(TestCase):
         response = self.client.get(reverse('home'))
         self.assertContains(
             response,
-            '<title>LLKMusic</title>',
+            '<title>LLKMusic | Blues &amp; Jazz</title>',
             html=False,
         )
         self.assertContains(response, 'name="description"', html=False)
@@ -403,6 +403,7 @@ class SEOTests(TestCase):
         self.assertContains(response, 'blues &amp; jazz Chicago', html=False)
         self.assertContains(response, 'property="og:site_name" content="LLKMusic"', html=False)
         self.assertContains(response, '<link rel="canonical" href="https://www.llkmusic.com/">', html=False)
+        self.assertContains(response, 'rel="icon" href="/static/img/logo.jpg" type="image/jpeg"', html=False)
         self.assertContains(response, 'application/ld+json')
         self.assertContains(response, '"@type": "WebSite"')
         self.assertContains(response, '"alternateName": ["LLK Music", "llkmusic", "LLKMusicVideos", "llkmusicvideos"]', html=False)
