@@ -55,7 +55,7 @@ class SEOContextMixin:
 class HomePageView(SEOContextMixin, FormView):
     template_name = 'home.html'
     form_class = ContactForm
-    page_title = 'LLKMusic'
+    page_title = 'LLKMusic | Blues & Jazz'
     page_description = (
         'LLKMusic by Chicago musician Konrad Kadzielawa offers blues and jazz '
         'guitar lessons, courses, blog posts, the associated YouTube channel '
