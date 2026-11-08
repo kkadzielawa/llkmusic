@@ -83,7 +83,7 @@ class HomePageView(SEOContextMixin, FormView):
                     'name': 'Konrad Kadzielawa',
                     'alternateName': ['kkadzielawa', 'LLKMusic', 'llkmusicvideos'],
                     'url': home_url,
-                    'image': f'{settings.SITE_URL}{static("img/personal_photo.png")}',
+                    'image': f'{settings.SITE_URL}{static("img/logo.jpg")}',
                     'jobTitle': 'Blues and jazz musician, guitarist, and music educator',
                     'homeLocation': {
                         '@type': 'Place',
