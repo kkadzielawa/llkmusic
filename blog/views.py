@@ -1,12 +1,10 @@
-import json
-
 from django.conf import settings
 from django.db import OperationalError, connection
-from django.core.serializers.json import DjangoJSONEncoder
 from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.text import Truncator
 from django.views.generic import ListView, DetailView
+from llkmusic.structured_data import serialize_json_ld
 from .models import Post
 
 
@@ -40,7 +38,7 @@ class PostListView(ListView):
             'LLKMusic blog, Konrad Kadzielawa, llkmusicvideos, blues guitar blog, '
             'jazz guitar blog, Chicago blues, improvisation lessons, ear training'
         )
-        context['json_ld'] = json.dumps(
+        context['json_ld'] = serialize_json_ld(
             {
                 '@context': 'https://schema.org',
                 '@type': 'Blog',
@@ -59,7 +57,6 @@ class PostListView(ListView):
                     'url': settings.SITE_URL,
                 },
             },
-            cls=DjangoJSONEncoder,
         )
         return context
 
@@ -90,7 +87,7 @@ class PostDetailView(DetailView):
         context['og_type'] = 'article'
         if self.object.featured_image:
             context['og_image'] = f'{settings.SITE_URL}{self.object.featured_image.url}'
-        context['json_ld'] = json.dumps(
+        context['json_ld'] = serialize_json_ld(
             {
                 '@context': 'https://schema.org',
                 '@type': 'Article',
@@ -111,6 +108,5 @@ class PostDetailView(DetailView):
                 'mainEntityOfPage': article_url,
                 'url': article_url,
             },
-            cls=DjangoJSONEncoder,
         )
         return context

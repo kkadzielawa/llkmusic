@@ -8,7 +8,7 @@
         <div class="section-heading cart-heading">
             <p class="eyebrow">Your Cart</p>
             <h1>Review your selected items</h1>
-            <p>This page is just for the cart. Use the courses page to add items, then come back here to adjust quantities or clear your order.</p>
+            <p>Choose your <a href="{% url 'courses' %}">courses and lessons</a>, review the details, and send your request. I will follow up by email to arrange the next steps.</p>
         </div>
 
         <aside class="cart-panel" id="cart" aria-labelledby="cart-title">
@@ -26,33 +26,36 @@
 
             <div class="cart-summary">
                 <div>
-                    <span>Subtotal</span>
+                    <span>Request subtotal</span>
                     <strong id="cart-subtotal">$0.00</strong>
-                </div>
-                <div>
-                    <span>Estimated total</span>
-                    <strong id="cart-total">$0.00</strong>
                 </div>
             </div>
 
             <form class="checkout-form" id="checkout-form" data-checkout-url="{% url 'cart_checkout' %}">
                 {% csrf_token %}
+                {{ checkout_form.submission_token }}
+                <div class="spam-trap" aria-hidden="true">
+                    <label for="checkout-website">Leave this field empty</label>
+                    <input type="text" id="checkout-website" name="website" tabindex="-1" autocomplete="off">
+                </div>
                 <div class="checkout-fields">
                     <div class="form-control">
                         <label for="checkout-name">Name</label>
-                        <input type="text" id="checkout-name" name="name" autocomplete="name" required>
+                        <input type="text" id="checkout-name" name="name" autocomplete="name" maxlength="120" required>
                     </div>
                     <div class="form-control">
                         <label for="checkout-email">Email</label>
-                        <input type="email" id="checkout-email" name="email" autocomplete="email" required>
+                        <input type="email" id="checkout-email" name="email" autocomplete="email" maxlength="254" required>
                     </div>
                     <div class="form-control">
                         <label for="checkout-notes">Notes</label>
-                        <textarea id="checkout-notes" name="notes" rows="3" placeholder="Scheduling, lesson goals, or anything I should know."></textarea>
+                        <textarea id="checkout-notes" name="notes" rows="3" maxlength="2000" placeholder="Scheduling, lesson goals, or anything I should know."></textarea>
                     </div>
                 </div>
+                <p class="form-help">Prices are in U.S. dollars. Sending this request does not charge you. I’ll confirm availability and delivery details by email.</p>
                 <button type="submit" class="btn btn-primary checkout-btn" id="checkout-btn" disabled>Submit Order</button>
             </form>
+            <noscript><p>Please enable JavaScript to use the cart, or <a href="{% url 'home' %}#contact">contact me directly</a> about a course or lesson.</p></noscript>
             <p class="checkout-note" id="checkout-note" role="status" aria-live="polite"></p>
         </aside>
     </div>
