@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 import os
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 import dj_database_url
 
@@ -38,10 +39,12 @@ def env_list(name, default=''):
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-wk5e#6+&bz0a7j^nyudx^1danya+(4(84g2i2^bo2@zb**0+$&')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-development-only')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env_bool('DEBUG', 'True')
+if not DEBUG and (SECRET_KEY.startswith('django-insecure-') or SECRET_KEY == 'replace-me'):
+    raise ImproperlyConfigured('Set a unique SECRET_KEY before running with DEBUG=False.')
 
 # Restrict ALLOWED_HOSTS
 allowed_hosts_env = os.environ.get('ALLOWED_HOSTS')
@@ -153,10 +156,15 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-if DEBUG:
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-else:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {
+        'BACKEND': (
+            'django.contrib.staticfiles.storage.StaticFilesStorage'
+            if DEBUG else 'whitenoise.storage.CompressedStaticFilesStorage'
+        ),
+    },
+}
 
 # Media files (user-uploaded files)
 MEDIA_URL = '/media/'
@@ -175,6 +183,18 @@ SECURE_SSL_REDIRECT = env_bool('SECURE_SSL_REDIRECT', 'False')
 SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '0'))
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'False')
 SECURE_HSTS_PRELOAD = env_bool('SECURE_HSTS_PRELOAD', 'False')
+SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+X_FRAME_OPTIONS = 'DENY'
+
+# Enable only behind the production proxy, which overwrites X-Real-IP.
+TRUST_PROXY_IP = env_bool('TRUST_PROXY_IP', 'False')
+PUBLIC_FORM_MIN_SECONDS = 2
+PUBLIC_FORM_MAX_SECONDS = 24 * 60 * 60
+PUBLIC_FORM_IP_LIMIT = 5
+PUBLIC_FORM_IP_WINDOW = 10 * 60
+PUBLIC_FORM_EMAIL_LIMIT = 3
+PUBLIC_FORM_EMAIL_WINDOW = 60 * 60
+PUBLIC_FORM_DUPLICATE_SECONDS = 10 * 60
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

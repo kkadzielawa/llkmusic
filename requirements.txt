@@ -1,9 +1,9 @@
 asgiref==3.8.1
-Django>=4.2,<5.0
+Django>=5.2.19,<5.3
 dj-database-url
 gunicorn
 pillow
 psycopg[binary]
 python-dotenv==1.0.1
-sqlparse==0.5.2
+sqlparse>=0.6.1,<0.7
 whitenoise

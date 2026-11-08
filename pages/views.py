@@ -1,11 +1,10 @@
 import logging
 import json
-from json import JSONDecodeError
+from decimal import Decimal
 
 from django.conf import settings
 from django.contrib import messages
 from django.core.mail import EmailMessage
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.http import JsonResponse
 from django.urls import reverse
@@ -13,6 +12,12 @@ from django.templatetags.static import static
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
+from llkmusic.structured_data import serialize_json_ld
+
+from .abuse import (
+    MAX_PUBLIC_SUBMISSION_BYTES, SubmissionRejected, claim_submission,
+    limit_public_request, release_submission,
+)
 from .catalog import MAX_CART_QUANTITY
 from .forms import CheckoutForm, ContactForm
 from .models import Course, Order, OrderItem
@@ -48,7 +53,7 @@ class SEOContextMixin:
         context.setdefault('robots_content', self.robots_content)
         json_ld = self.get_json_ld()
         if json_ld:
-            context['json_ld'] = json.dumps(json_ld, cls=DjangoJSONEncoder)
+            context['json_ld'] = serialize_json_ld(json_ld)
         return context
 
 
@@ -78,7 +83,7 @@ class HomePageView(SEOContextMixin, FormView):
                     'name': 'Konrad Kadzielawa',
                     'alternateName': ['kkadzielawa', 'LLKMusic', 'llkmusicvideos'],
                     'url': home_url,
-                    'image': f'{settings.SITE_URL}{static("img/logo.jpg")}',
+                    'image': f'{settings.SITE_URL}{static("img/personal_photo.png")}',
                     'jobTitle': 'Blues and jazz musician, guitarist, and music educator',
                     'homeLocation': {
                         '@type': 'Place',
@@ -146,8 +151,39 @@ class HomePageView(SEOContextMixin, FormView):
     def get_success_url(self):
         return f'{reverse("home")}#contact'
 
+    def get_initial(self):
+        initial = super().get_initial()
+        requested_service = self.request.GET.get('service')
+        allowed_services = {value for value, _ in ContactForm.SERVICE_CHOICES}
+        if requested_service in allowed_services:
+            initial['services'] = requested_service
+        return initial
+
+    def post(self, request, *args, **kwargs):
+        try:
+            limit_public_request(request)
+        except SubmissionRejected as error:
+            return self.submission_rejected(self.get_form(), error)
+        return super().post(request, *args, **kwargs)
+
+    def submission_rejected(self, form, error):
+        form.add_error(None, str(error))
+        response = self.render_to_response(self.get_context_data(form=form), status=error.status)
+        if error.retry_after:
+            response['Retry-After'] = error.retry_after
+        return response
+
     def form_valid(self, form):
         cleaned_data = form.cleaned_data
+        try:
+            claims = claim_submission(
+                'contact', cleaned_data['submission_token'],
+                {key: cleaned_data[key] for key in ('name', 'services', 'message')}
+                | {'email': cleaned_data['email'].casefold()},
+                cleaned_data['email'],
+            )
+        except SubmissionRejected as error:
+            return self.submission_rejected(form, error)
         service_label = dict(ContactForm.SERVICE_CHOICES)[cleaned_data['services']]
         email = EmailMessage(
             subject=f'LLKMusic contact form: {service_label}',
@@ -165,6 +201,7 @@ class HomePageView(SEOContextMixin, FormView):
         try:
             email.send(fail_silently=False)
         except Exception:
+            release_submission(claims)
             logger.exception('Contact form email delivery failed')
             messages.error(
                 self.request,
@@ -176,6 +213,8 @@ class HomePageView(SEOContextMixin, FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
+        if form.errors.get('submission_token'):
+            form.refresh_submission_token()
         messages.error(self.request, 'Please fix the highlighted fields and try again.')
         return super().form_invalid(form)
 
@@ -228,21 +267,45 @@ class CartPageView(SEOContextMixin, TemplateView):
     page_description = 'Review selected LLKMusic courses, song packs, and private lesson options.'
     robots_content = 'noindex, nofollow'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['checkout_form'] = CheckoutForm()
+        return context
+
 
 class CheckoutView(View):
     http_method_names = ['post']
 
     def post(self, request, *args, **kwargs):
         try:
+            limit_public_request(request)
+        except SubmissionRejected as error:
+            return self.submission_rejected(error)
+        if len(request.body) > MAX_PUBLIC_SUBMISSION_BYTES:
+            return JsonResponse({'error': 'Checkout data is too large.'}, status=413)
+        try:
             payload = json.loads(request.body.decode('utf-8'))
-        except (JSONDecodeError, UnicodeDecodeError):
+        except (ValueError, RecursionError):
             return JsonResponse({'error': 'Invalid checkout data.'}, status=400)
         if not isinstance(payload, dict):
             return JsonResponse({'error': 'Invalid checkout data.'}, status=400)
 
-        form = CheckoutForm(payload.get('customer') or {})
+        customer = payload.get('customer')
+        if not isinstance(customer, dict):
+            return JsonResponse({'error': 'Invalid customer data.'}, status=400)
+        if any(not isinstance(customer.get(field, ''), str) for field in ('name', 'email', 'notes')):
+            return JsonResponse({'error': 'Invalid customer data.'}, status=400)
+        form = CheckoutForm(customer | {
+            'website': payload.get('website', ''),
+            'submission_token': payload.get('submission_token', ''),
+        })
         if not form.is_valid():
-            return JsonResponse({'error': 'Please enter your name and a valid email.'}, status=400)
+            errors = form.errors
+            error = (
+                errors.get('submission_token', [''])[0]
+                or 'Please enter your name and a valid email, and keep notes under 2,000 characters.'
+            )
+            return JsonResponse({'error': error, 'submission_token': form.new_submission_token()}, status=400)
 
         try:
             order_items = self._build_order_items(payload.get('items') or [])
@@ -250,45 +313,68 @@ class CheckoutView(View):
             return JsonResponse({'error': str(error)}, status=400)
 
         subtotal = sum(item['line_total'] for item in order_items)
-        with transaction.atomic():
-            order = Order.objects.create(
-                customer_name=form.cleaned_data['name'],
-                customer_email=form.cleaned_data['email'],
-                notes=form.cleaned_data.get('notes', ''),
-                subtotal=subtotal,
-            )
-            OrderItem.objects.bulk_create([
-                OrderItem(
-                    order=order,
-                    product_id=item['product'].slug,
-                    product_name=item['product'].name,
-                    unit_price=item['product'].price,
-                    quantity=item['quantity'],
-                    line_total=item['line_total'],
+        if subtotal > Decimal('999999.99'):
+            return JsonResponse({'error': 'Order total is too large. Please contact me to arrange it.'}, status=400)
+        try:
+            with transaction.atomic():
+                claim_submission(
+                    'checkout', form.cleaned_data['submission_token'],
+                    {
+                        'name': form.cleaned_data['name'],
+                        'email': form.cleaned_data['email'].casefold(),
+                        'notes': form.cleaned_data['notes'],
+                        'items': sorted((item['product'].slug, item['quantity']) for item in order_items),
+                    },
+                    form.cleaned_data['email'],
                 )
-                for item in order_items
-            ])
+                order = Order.objects.create(
+                    customer_name=form.cleaned_data['name'],
+                    customer_email=form.cleaned_data['email'],
+                    notes=form.cleaned_data['notes'],
+                    subtotal=subtotal,
+                )
+                OrderItem.objects.bulk_create([
+                    OrderItem(
+                        order=order,
+                        product_id=item['product'].slug,
+                        product_name=item['product'].name,
+                        unit_price=item['product'].price,
+                        quantity=item['quantity'],
+                        line_total=item['line_total'],
+                    )
+                    for item in order_items
+                ])
+        except SubmissionRejected as error:
+            return self.submission_rejected(error)
 
         self._send_order_notification(order)
         return JsonResponse({
             'subtotal': f'{order.subtotal:.2f}',
             'item_count': sum(item['quantity'] for item in order_items),
             'message': self._build_success_message(order_items),
+            'submission_token': form.new_submission_token(),
         })
+
+    def submission_rejected(self, error):
+        response = JsonResponse({'error': str(error)}, status=error.status)
+        if error.retry_after:
+            response['Retry-After'] = error.retry_after
+        return response
 
     def _build_order_items(self, raw_items):
         if not isinstance(raw_items, list) or not raw_items:
             raise ValueError('Your cart is empty.')
+        if len(raw_items) > 100:
+            raise ValueError('Too many cart items. Please shorten your order.')
 
         quantities_by_product_id = {}
         for raw_item in raw_items:
             product_id = raw_item.get('id') if isinstance(raw_item, dict) else None
-            if not product_id:
+            if not isinstance(product_id, str) or not product_id or len(product_id) > 80:
                 raise ValueError('One of the cart items is no longer available.')
 
-            try:
-                quantity = int(raw_item.get('quantity', 0))
-            except (TypeError, ValueError):
+            quantity = raw_item.get('quantity', 0)
+            if type(quantity) is not int:
                 raise ValueError('Cart quantities must be valid numbers.')
 
             if quantity < 1:

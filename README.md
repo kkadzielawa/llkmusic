@@ -6,7 +6,7 @@ A Django-based web portal for blues & jazz guitar/piano learning, containing a b
 
 ## Technical Stack
 
-- **Backend**: Django 4.2 LTS (Python 3.12)
+- **Backend**: Django 5.2 LTS (Python 3.12)
 - **Frontend**: HTML5, Vanilla CSS3, Vanilla Javascript
 - **Database**: PostgreSQL in Docker, SQLite3 for the non-Docker fallback
 
@@ -99,6 +99,32 @@ EMAIL_HOST_PASSWORD=replace-with-app-password
 DEFAULT_FROM_EMAIL=LLKMusic <your-sender@gmail.com>
 CONTACT_FORM_RECIPIENTS=kkadzi25@gmail.com
 ```
+
+## Public form protection
+
+Contact and checkout submissions use server-side protection without requiring a CAPTCHA service:
+
+- A honeypot and signed form token reject filled spam traps, submissions without a valid token, and submissions made less than two seconds after loading a form. Tokens last 24 hours.
+- Both endpoints share limits of five attempts per IP address (IPv6 /64) per ten-minute window and three valid submissions per email address per hour. HTTP 429 responses include `Retry-After`.
+- Single-use tokens and ten-minute duplicate detection prevent repeated emails and orders. Failed contact email delivery releases the duplicate claim so the visitor can retry.
+- Counters and claims live in the database, so protection works across Gunicorn workers and threads. Only keyed hashes are stored in the guard table; expired records are removed in bounded batches during submissions.
+- Limits and time windows are defined by the `PUBLIC_FORM_*` settings in `llkmusic/settings.py`.
+
+Apply migrations when deploying these changes. The existing container entrypoint does this automatically. Without Docker, run `python manage.py migrate`.
+
+The production Compose service enables `TRUST_PROXY_IP` because Caddy overwrites `X-Real-IP` and the Django service is not exposed publicly. Keep this disabled when Django is directly reachable, and do not replace the trusted header with a visitor-supplied `X-Forwarded-For` value. If another CDN is placed in front of Caddy, configure its trusted proxy addresses before relying on forwarded client IPs.
+
+Use a unique, private `SECRET_KEY` in production; the app refuses the example/development key when `DEBUG=False`. The key protects signed form tokens as well as Django sessions.
+
+Django is upgraded to the [supported 5.2 LTS series](https://www.djangoproject.com/download/#supported-versions), and the SQL parser dependency includes the [latest security fixes](https://sqlparse.readthedocs.io/en/latest/changes.html). Static storage uses Django's current `STORAGES` configuration. Structured data is escaped before insertion into inline JSON-LD scripts.
+
+### Email and further improvements
+
+The site sends notifications only to `CONTACT_FORM_RECIPIENTS`, using your configured sender and the visitor's address as `Reply-To`. It does not send automated replies to arbitrary visitor addresses. These controls reduce abuse of website-generated mail; they do not filter unsolicited mail sent directly to your inbox.
+
+For mail using an address at your own domain, verify SPF and DKIM with your email provider and configure DMARC through the domain's DNS provider. Those account/DNS settings are outside this repository and have not been verified or changed here. Google documents the setup in its [email sender guidelines](https://support.google.com/a/answer/81126).
+
+If distributed spam continues, the next step is a server-verified challenge such as Turnstile plus edge request limits. Review real submissions before tightening limits, especially when visitors share an IP address. Good follow-up website work is to confirm course delivery and scheduling details, add previews with the owner's permission, and measure performance on real mobile devices.
 
 ## CI/CD
 

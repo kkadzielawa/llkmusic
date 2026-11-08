@@ -14,6 +14,7 @@
             <div class="showcase-actions">
                 <a href="{% url 'blog:post_list' %}" class="btn btn-outline">Read Blog</a>
                 <a href="{% url 'courses' %}" class="btn btn-outline">View Courses</a>
+                <a href="https://www.youtube.com/@llkmusicvideos" class="btn btn-outline" target="_blank" rel="noopener noreferrer">Watch Performances</a>
             </div>
         </div>
         <div class="showcase-form card" id="contact">
@@ -22,43 +23,63 @@
                 <h2>Contact Me</h2>
             </div>
             {% if messages %}
-            <div class="form-messages">
+            <div class="form-messages" role="status" aria-live="polite">
                 {% for message in messages %}
                 <p class="form-message form-message-{{ message.tags }}">{{ message }}</p>
                 {% endfor %}
             </div>
             {% endif %}
-            <form method="post" action="{% url 'home' %}#contact" novalidate class="contact-form">
+            <form method="post" action="{% url 'home' %}#contact" class="contact-form">
                 {% csrf_token %}
-                {{ form.website }}
+                {{ form.submission_token }}
+                <div class="spam-trap" aria-hidden="true">
+                    <label for="{{ form.website.id_for_label }}">Leave this field empty</label>
+                    {{ form.website }}
+                </div>
+                {% if form.non_field_errors or form.submission_token.errors or form.website.errors %}
+                <div class="form-message form-message-error" role="alert">
+                    {{ form.non_field_errors }}
+                    {{ form.submission_token.errors }}
+                    {% if form.website.errors %}<p>Unable to send this submission. Please check the form and try again.</p>{% endif %}
+                </div>
+                {% endif %}
                 <div class="form-control">
                     <label for="{{ form.name.id_for_label }}">Name:</label>
                     {{ form.name }}
+                    <div id="{{ form.name.auto_id }}_error">
                     {% for error in form.name.errors %}
                     <p class="field-error">{{ error }}</p>
                     {% endfor %}
+                    </div>
                 </div>
                 <div class="form-control">
                     <label for="{{ form.email.id_for_label }}">Email:</label>
                     {{ form.email }}
+                    <div id="{{ form.email.auto_id }}_error">
                     {% for error in form.email.errors %}
                     <p class="field-error">{{ error }}</p>
                     {% endfor %}
+                    </div>
                 </div>
                 <div class="form-control">
                     <label for="{{ form.services.id_for_label }}">Interested in:</label>
                     {{ form.services }}
+                    <div id="{{ form.services.auto_id }}_error">
                     {% for error in form.services.errors %}
                     <p class="field-error">{{ error }}</p>
                     {% endfor %}
+                    </div>
                 </div>
                 <div class="form-control">
                     <label for="{{ form.message.id_for_label }}">Details: </label>
                     {{ form.message }}
+                    <div id="{{ form.message.auto_id }}_error">
                     {% for error in form.message.errors %}
                     <p class="field-error">{{ error }}</p>
                     {% endfor %}
+                    </div>
                 </div>
+                <p class="form-help">Your email is used to reply to your inquiry.</p>
                 <div class="contact-form-footer">
                     <button type="submit" class="btn btn-primary contact-submit">Send</button>
                 </div>
@@ -70,7 +91,7 @@
 <section class="about-me">
     <div class="container grid">
         <div class="about-me-photo">
-            <img src="{% static 'img/logo.jpg' %}" alt="LLKMusic logo">
+            <img src="{% static 'img/personal_photo.png' %}" alt="Konrad Kadzielawa, Chicago blues and jazz musician" width="304" height="304" loading="lazy" decoding="async">
         </div>
         <div class="about-me-text">
             <p>

@@ -34,8 +34,11 @@
   <link rel="me" href="https://www.youtube.com/@llkmusicvideos">
   <link rel="me" href="https://www.linkedin.com/in/konradkadzielawa/">
   <link rel="me" href="https://www.instagram.com/konradkadzielawa/">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
-  <script src="https://kit.fontawesome.com/6e526d197e.js" crossorigin="anonymous"></script>
+  <script src="https://kit.fontawesome.com/6e526d197e.js" crossorigin="anonymous" defer></script>
   <title>{% block title %}{{ page_title|default:'LLKMusic | Blues & Jazz | Blog & Courses' }}{% endblock %}</title>
   {% if json_ld %}
   <script type="application/ld+json">{{ json_ld|safe }}</script>
@@ -43,16 +46,17 @@
 </head>
 
 <body>
+  <a href="#main-content" class="skip-link">Skip to content</a>
 
   <div class="navbar">
     <div class="container flex">
-      <h1 class="logo"><a href="{% url 'home' %}">LLKMusic</a></h1>
-      <nav class="nav-menu" id="nav-menu">
+      <span class="logo"><a href="{% url 'home' %}">LLKMusic</a></span>
+      <nav class="nav-menu" id="nav-menu" aria-label="Main navigation">
         <ul>
-          <li><a href="{% url 'home' %}">Home</a></li>
-          <li><a href="{% url 'blog:post_list' %}">Blog</a></li>
-          <li><a href="{% url 'courses' %}">Courses</a></li>
-          <li><a href="{% url 'services' %}">Services</a></li>
+          <li><a href="{% url 'home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>Home</a></li>
+          <li><a href="{% url 'blog:post_list' %}"{% if request.resolver_match.namespace == 'blog' %} aria-current="page"{% endif %}>Blog</a></li>
+          <li><a href="{% url 'courses' %}"{% if request.resolver_match.url_name == 'courses' %} aria-current="page"{% endif %}>Courses</a></li>
+          <li><a href="{% url 'services' %}"{% if request.resolver_match.url_name == 'services' %} aria-current="page"{% endif %}>Services</a></li>
           <li>
             <a href="{% url 'cart' %}" class="cart-nav-link" aria-label="View shopping cart status">
               <i class="fas fa-shopping-cart"></i>
@@ -63,12 +67,12 @@
         </ul>
       </nav>
       <button class="menu-btn" id="menu-btn" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-menu">
-        <i class="fas fa-bars"></i>
+        <span aria-hidden="true">&#9776;</span>
       </button>
     </div>
   </div>
 
-  <main class="main-content">
+  <main class="main-content" id="main-content" tabindex="-1">
     {% block content %}
     {% endblock content %}
   </main>
@@ -80,10 +84,10 @@
       </div>
       <div>
         <ul class="flex">
-          <li><a href="https://www.linkedin.com/in/konradkadzielawa/"><i class="fab fa-linkedin-in fa-lg"></i></a></li>
-          <li><a href="https://www.youtube.com/@llkmusicvideos"><i class="fab fa-youtube fa-lg"></i></a></li>
-          <li><a href="https://twitter.com/kkadzielawa"><i class="fab fa-twitter fa-lg"></i></a></li>
-          <li><a href="https://www.instagram.com/konradkadzielawa/"><i class="fab fa-instagram fa-lg"></i></a></li>
+          <li><a href="https://www.linkedin.com/in/konradkadzielawa/" aria-label="LinkedIn"><i class="fab fa-linkedin-in fa-lg" aria-hidden="true"></i></a></li>
+          <li><a href="https://www.youtube.com/@llkmusicvideos" aria-label="YouTube"><i class="fab fa-youtube fa-lg" aria-hidden="true"></i></a></li>
+          <li><a href="https://twitter.com/kkadzielawa" aria-label="Twitter"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+          <li><a href="https://www.instagram.com/konradkadzielawa/" aria-label="Instagram"><i class="fab fa-instagram fa-lg" aria-hidden="true"></i></a></li>
         </ul>
       </div>
     </div>
