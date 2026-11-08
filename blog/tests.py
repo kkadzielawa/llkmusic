@@ -1,3 +1,4 @@
+import json
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
@@ -31,6 +32,13 @@ class BlogTests(TestCase):
 
     def test_post_model_str(self):
         self.assertEqual(str(self.post), 'My Blues Improvisation')
+
+    def test_post_title_cannot_close_json_ld_script(self):
+        self.post.title = '</script><script>alert("xss")</script>'
+        self.post.save()
+        response = self.client.get(self.post.get_absolute_url())
+        self.assertNotContains(response, '</script><script>alert("xss")</script>')
+        self.assertEqual(json.loads(response.context['json_ld'])['headline'], self.post.title)
 
     def test_kkadzielawa_author_displays_full_name(self):
         konrad = User.objects.create_user(username='kkadzielawa', password='testpassword')

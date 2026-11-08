@@ -4,6 +4,14 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 
+class SubmissionGuard(models.Model):
+    """Short-lived counters and claims shared by all application workers."""
+
+    key = models.CharField(max_length=64, primary_key=True)
+    hits = models.PositiveIntegerField(default=0)
+    expires_at = models.DateTimeField(db_index=True)
+
+
 class Course(models.Model):
     slug = models.SlugField(max_length=80, unique=True)
     name = models.CharField(max_length=160)

@@ -5,9 +5,11 @@ from django.core import mail
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
+from .forms import CheckoutForm, ContactForm
 from .models import Course, Order
 
 
+@override_settings(PUBLIC_FORM_MIN_SECONDS=0)
 class PagesTests(TestCase):
     def test_homepage_status_code(self):
         response = self.client.get('/')
@@ -45,6 +47,7 @@ class PagesTests(TestCase):
     )
     def test_contact_form_valid_submission_sends_email(self):
         response = self.client.post(reverse('home'), {
+            'submission_token': ContactForm().initial['submission_token'],
             'name': 'Miles Davis',
             'email': 'miles@example.com',
             'services': 'learn',
@@ -65,6 +68,7 @@ class PagesTests(TestCase):
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_contact_form_invalid_submission_does_not_send_email(self):
         response = self.client.post(reverse('home'), {
+            'submission_token': ContactForm().initial['submission_token'],
             'name': '',
             'email': 'not-an-email',
             'services': 'learn',
@@ -78,6 +82,7 @@ class PagesTests(TestCase):
     @override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
     def test_contact_form_honeypot_submission_does_not_send_email(self):
         response = self.client.post(reverse('home'), {
+            'submission_token': ContactForm().initial['submission_token'],
             'name': 'Spam Sender',
             'email': 'spam@example.com',
             'services': 'other',
@@ -93,6 +98,7 @@ class PagesTests(TestCase):
     @patch('pages.views.EmailMessage.send', side_effect=OSError('SMTP timeout'))
     def test_contact_form_email_failure_returns_error_message(self, mock_send, mock_logger_exception):
         response = self.client.post(reverse('home'), {
+            'submission_token': ContactForm().initial['submission_token'],
             'name': 'John Coltrane',
             'email': 'john@example.com',
             'services': 'record',
@@ -192,12 +198,14 @@ class PagesTests(TestCase):
     EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
     DEFAULT_FROM_EMAIL='LLKMusic <sender@example.com>',
     CONTACT_FORM_RECIPIENTS=['orders@example.com'],
+    PUBLIC_FORM_MIN_SECONDS=0,
 )
 class CheckoutTests(TestCase):
     def test_valid_checkout_creates_order_and_sends_email(self):
         response = self.client.post(
             reverse('cart_checkout'),
             data=json.dumps({
+                'submission_token': CheckoutForm().initial['submission_token'],
                 'customer': {
                     'name': 'Wes Montgomery',
                     'email': 'wes@example.com',
@@ -233,6 +241,7 @@ class CheckoutTests(TestCase):
         response = self.client.post(
             reverse('cart_checkout'),
             data=json.dumps({
+                'submission_token': CheckoutForm().initial['submission_token'],
                 'customer': {
                     'name': 'Visitor',
                     'email': 'visitor@example.com',
@@ -252,6 +261,7 @@ class CheckoutTests(TestCase):
         response = self.client.post(
             reverse('cart_checkout'),
             data=json.dumps({
+                'submission_token': CheckoutForm().initial['submission_token'],
                 'customer': {
                     'name': 'Visitor',
                     'email': 'not-an-email',
@@ -270,6 +280,7 @@ class CheckoutTests(TestCase):
         response = self.client.post(
             reverse('cart_checkout'),
             data=json.dumps({
+                'submission_token': CheckoutForm().initial['submission_token'],
                 'customer': {
                     'name': 'Grant Green',
                     'email': 'grant@example.com',
@@ -303,6 +314,7 @@ class CheckoutTests(TestCase):
         response = self.client.post(
             reverse('cart_checkout'),
             data=json.dumps({
+                'submission_token': CheckoutForm().initial['submission_token'],
                 'customer': {
                     'name': 'Emily Remler',
                     'email': 'emily@example.com',
@@ -333,6 +345,7 @@ class CheckoutTests(TestCase):
         response = self.client.post(
             reverse('cart_checkout'),
             data=json.dumps({
+                'submission_token': CheckoutForm().initial['submission_token'],
                 'customer': {
                     'name': 'Visitor',
                     'email': 'visitor@example.com',
@@ -351,6 +364,7 @@ class CheckoutTests(TestCase):
         response = self.client.post(
             reverse('cart_checkout'),
             data=json.dumps({
+                'submission_token': CheckoutForm().initial['submission_token'],
                 'customer': {
                     'name': 'Visitor',
                     'email': 'visitor@example.com',
@@ -389,6 +403,15 @@ class CheckoutTests(TestCase):
 
 @override_settings(SECURE_SSL_REDIRECT=False, ALLOWED_HOSTS=['testserver', 'www.llkmusic.com'])
 class SEOTests(TestCase):
+    def test_course_content_cannot_close_json_ld_script(self):
+        course = Course.objects.first()
+        course.name = '</script><script>alert("xss")</script>'
+        course.save()
+        response = self.client.get(reverse('courses'))
+        self.assertNotContains(response, '</script><script>alert("xss")</script>')
+        self.assertContains(response, '\\u003C/script\\u003E')
+        self.assertEqual(json.loads(response.context['json_ld'])['itemListElement'][0]['name'], course.name)
+
     def test_homepage_has_search_metadata(self):
         response = self.client.get(reverse('home'))
         self.assertContains(

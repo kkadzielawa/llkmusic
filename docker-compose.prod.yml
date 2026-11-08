@@ -4,6 +4,9 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      # The web service is reachable only through Caddy, which sets this header.
+      TRUST_PROXY_IP: "True"
     expose:
       - "8000"
     volumes:

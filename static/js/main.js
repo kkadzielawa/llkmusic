@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkoutBtn = document.getElementById('checkout-btn');
     const checkoutNote = document.getElementById('checkout-note');
     const checkoutForm = document.getElementById('checkout-form');
+    const contactForm = document.querySelector('.contact-form');
     const addToCartButtons = document.querySelectorAll('.add-to-cart');
     const currency = new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -17,6 +18,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAX_CART_QUANTITY = 20;
     let cart = loadCart();
     let checkoutMessageTimeout;
+    let checkoutPending = false;
+
+    if (contactForm) {
+        const submitButton = contactForm.querySelector('[type="submit"]');
+        contactForm.addEventListener('submit', (event) => {
+            if (contactForm.getAttribute('aria-busy') === 'true') {
+                event.preventDefault();
+                return;
+            }
+            if (contactForm.checkValidity()) {
+                contactForm.setAttribute('aria-busy', 'true');
+                submitButton.disabled = true;
+                submitButton.textContent = 'Sending…';
+            }
+        });
+        window.addEventListener('pageshow', () => {
+            contactForm.removeAttribute('aria-busy');
+            submitButton.disabled = false;
+            submitButton.textContent = 'Send';
+        });
+    }
 
     if (menuBtn && navMenu) {
         menuBtn.addEventListener('click', () => {
@@ -31,6 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     icon.classList.remove('fa-times');
                     icon.classList.add('fa-bars');
                 }
+            }
+        });
+        navMenu.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && navMenu.classList.contains('show')) {
+                menuBtn.click();
+                menuBtn.focus();
+            }
+        });
+        navMenu.addEventListener('click', (event) => {
+            if (event.target.closest('a') && navMenu.classList.contains('show')) {
+                menuBtn.click();
             }
         });
     }
@@ -66,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (clearCartBtn) {
         clearCartBtn.addEventListener('click', () => {
+            if (checkoutPending) return;
             cart = [];
             saveCart();
             renderCart();
@@ -101,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateQuantity(productId, action) {
+        if (checkoutPending) return;
         cart = cart
             .map((item) => {
                 if (item.id !== productId) {
@@ -129,17 +164,22 @@ document.addEventListener('DOMContentLoaded', () => {
             cartCountEl.classList.add('cart-count-pop');
         }
 
-        if (!cartItemsEl || !cartSubtotalEl || !cartTotalEl) {
+        if (!cartItemsEl || !cartSubtotalEl) {
             return;
         }
 
         const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
         cartSubtotalEl.textContent = currency.format(subtotal);
-        cartTotalEl.textContent = currency.format(subtotal);
+        if (cartTotalEl) {
+            cartTotalEl.textContent = currency.format(subtotal);
+        }
 
         if (checkoutBtn) {
-            checkoutBtn.disabled = cart.length === 0;
+            checkoutBtn.disabled = checkoutPending || cart.length === 0;
+        }
+        if (clearCartBtn) {
+            clearCartBtn.disabled = checkoutPending || cart.length === 0;
         }
 
         if (!cart.length) {
@@ -158,9 +198,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="cart-item-total">${currency.format(itemTotal)} total</p>
                 </div>
                 <div class="quantity-controls" aria-label="Quantity controls for ${escapeHtml(item.name)}">
-                    <button type="button" data-cart-action="decrease" data-product-id="${escapeHtml(item.id)}" aria-label="Decrease ${escapeHtml(item.name)} quantity">-</button>
+                    <button type="button" data-cart-action="decrease" data-product-id="${escapeHtml(item.id)}" aria-label="Decrease ${escapeHtml(item.name)} quantity" ${checkoutPending ? 'disabled' : ''}>-</button>
                     <span>${item.quantity}</span>
-                    <button type="button" data-cart-action="increase" data-product-id="${escapeHtml(item.id)}" aria-label="Increase ${escapeHtml(item.name)} quantity" ${item.quantity >= MAX_CART_QUANTITY ? 'disabled' : ''}>+</button>
+                    <button type="button" data-cart-action="increase" data-product-id="${escapeHtml(item.id)}" aria-label="Increase ${escapeHtml(item.name)} quantity" ${checkoutPending || item.quantity >= MAX_CART_QUANTITY ? 'disabled' : ''}>+</button>
                 </div>
             </div>
         `;
@@ -229,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function submitCheckout() {
-        if (!checkoutForm.reportValidity()) {
+        if (checkoutPending || !checkoutForm.reportValidity()) {
             return;
         }
 
@@ -245,12 +285,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 id: item.id,
                 quantity: item.quantity,
             })),
+            website: formData.get('website'),
+            submission_token: formData.get('submission_token'),
         };
 
         setCheckoutMessage('Submitting your order...', 'info');
-        if (checkoutBtn) {
-            checkoutBtn.disabled = true;
-        }
+        checkoutPending = true;
+        checkoutForm.setAttribute('aria-busy', 'true');
+        renderCart();
 
         fetch(checkoutUrl, {
             method: 'POST',
@@ -261,7 +303,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 'X-CSRFToken': getCsrfToken(checkoutForm),
             },
         })
-            .then((response) => response.json().then((data) => {
+            .then((response) => response.json().catch(() => {
+                throw new Error(response.status === 403
+                    ? 'Your session has expired. Refresh this page and try again.'
+                    : 'Unable to submit your order. Please try again later.');
+            }).then((data) => {
+                if (data.submission_token) {
+                    const token = checkoutForm.elements.namedItem('submission_token');
+                    token.value = data.submission_token;
+                    token.defaultValue = data.submission_token;
+                }
                 if (!response.ok) {
                     throw new Error(data.error || 'Checkout failed.');
                 }
@@ -272,10 +323,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveCart();
                 renderCart();
                 checkoutForm.reset();
-                setCheckoutMessage(data.message, 'success', 5000);
+                setCheckoutMessage(data.message, 'success');
             })
             .catch((error) => {
-                setCheckoutMessage(error.message, 'error', 5000);
+                const message = error instanceof TypeError
+                    ? 'Unable to reach the server. Please check your connection and try again.'
+                    : error.message || 'Unable to submit your order. Please try again.';
+                setCheckoutMessage(message, 'error');
+            })
+            .finally(() => {
+                checkoutPending = false;
+                checkoutForm.removeAttribute('aria-busy');
                 renderCart();
             });
     }
@@ -372,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function flyToCart(button, productCard) {
-        if (!cartCountEl) {
+        if (!cartCountEl || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             return;
         }
 
